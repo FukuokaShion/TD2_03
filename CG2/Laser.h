@@ -2,6 +2,7 @@
 #include "GameObject3D.h"
 #include "Input.h"
 #include "MathFunc.h"
+#include "ViewProjection.h"
 
 class Laser {
 public:
@@ -31,7 +32,8 @@ public:
 	//ゲッター
 	float GetRadius() { return laser_->worldTransform.scale.y; }
 	Vector3 GetAngle() { return angle; };
-
+	ViewProjection GetView() { return viewProjection_; }
+	
 	//メンバ関数
 private:
 
@@ -56,8 +58,9 @@ private:
 	//----攻撃----
 	GameObject3D* laser_ = nullptr;
 
+	ViewProjection viewProjection_;
 	Vector3 viewTarget;
-	Matrix4 viewMat;
+	Matrix4 viewTargetMat;
 
 
 	//-----制限-----

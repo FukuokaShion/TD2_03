@@ -51,24 +51,12 @@ void Map::Draw() {
 
 }
 
-
-Vector3 Map::GetViewTarget() {
-	Vector3 viewTarget;
-
-	if (isControlRLaser) {
-		viewTarget = rLaser->GetAimPos();
-	}
-
-	return viewTarget;
-}
-
-
-WorldTransform Map::GetViewWorldTransform() {
-	WorldTransform viewWorldTransform;
+ViewProjection Map::GetView() {
+	ViewProjection viewProjection;
 
 	if (isControlRLaser) {
-		viewWorldTransform = rLaser->GetWorldTransform();
+		viewProjection = rLaser->GetView();
 	}
 
-	return viewWorldTransform;
+	return viewProjection;
 }

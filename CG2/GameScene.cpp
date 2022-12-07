@@ -77,15 +77,13 @@ void GameScene::Update() {
 			//情報取得
 		if (map->GetIsControlRLaser()) {
 			player_->Update();
-			viewProjection_.eye = { 0,0,0 };
-			viewProjection_.UpdateView(map->GetViewTarget(), map->GetViewWorldTransform());
+			viewProjection_ = map->GetView();
 		}else {
 			//プレイヤー
 			player_->Update();
 			player_->Rotate();
 			player_->Move();
-			viewProjection_.eye = Vector3{ 0,3,-8 };
-			viewProjection_.UpdateView(player_->GetAimPos(), player_->GetWorldTransform());
+			viewProjection_ = player_->GetView();
 		}
 
 

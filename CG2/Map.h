@@ -21,8 +21,7 @@ public:
 
 	bool GetIsControlRLaser() { return isControlRLaser; }
 
-	Vector3 GetViewTarget();
-	WorldTransform GetViewWorldTransform();
+	ViewProjection GetView();
 
 private:
 	//ƒL[“ü—Í
