@@ -16,6 +16,9 @@ Laser::~Laser() {
 
 void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, int colour) {
 	GetCursorPos(&mousePos);
+	viewProjection_.Initialize();
+	viewProjection_.eye = Vector3{ 0,1.5f,0 };
+	viewTargetMat.SetIdentityMatrix();
 
 	device_ = new GameObject3D();
 	device_->PreLoadModel("Resources/tofu/player.obj");
@@ -24,14 +27,13 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 	device_->SetMatProjection(matProjection);
 	device_->Initialize();
 
-	
 	laser_ = new GameObject3D();
 	laser_->PreLoadModel("Resources/tofu/tofu.obj");
 	laser_->PreLoadTexture(L"Resources/bullet.png");
 	laser_->SetViewProjection(viewProjection);
 	laser_->SetMatProjection(matProjection);
 	laser_->Initialize();
-	laser_->worldTransform.scale = { 1,0.6f ,0.6f };
+	laser_->worldTransform.scale = { 1,0.3f ,0.3f };
 
 }
 
@@ -46,14 +48,18 @@ void Laser::Reset() {
 void Laser::Update() {
 	device_->Update();
 
-	viewMat.SetIdentityMatrix();
-	viewMat.m[3][0] = viewTarget.x;
-	viewMat.m[3][1] = viewTarget.y;
-	viewMat.m[3][2] = viewTarget.z;
+	viewTargetMat.SetIdentityMatrix();
+	viewTargetMat.m[3][0] = viewTarget.x;
+	viewTargetMat.m[3][1] = viewTarget.y;
+	viewTargetMat.m[3][2] = viewTarget.z;
 
-	viewMat *= device_->worldTransform.matWorld;
+	viewTargetMat *= device_->worldTransform.matWorld;
 
+	viewProjection_.target.x = viewTargetMat.m[3][0];
+	viewProjection_.target.y = viewTargetMat.m[3][1];
+	viewProjection_.target.z = viewTargetMat.m[3][2];
 
+	viewProjection_.UpdateView(GetAimPos(), device_->worldTransform);
 	laser_->Update();
 }
 
@@ -104,9 +110,9 @@ void Laser::Rotate() {
 	}
 
 
-	laser_->worldTransform.rotation = BulletRota(device_->worldTransform.translation, Vector3(viewMat.m[3][0], viewMat.m[3][1], viewMat.m[3][2]));
-	laser_->worldTransform.scale.x = BulletScale(device_->worldTransform.translation, Vector3(viewMat.m[3][0], viewMat.m[3][1], viewMat.m[3][2]));
-	laser_->worldTransform.translation = BulletTrans(device_->worldTransform.translation, Vector3(viewMat.m[3][0], viewMat.m[3][1], viewMat.m[3][2]));
+	laser_->worldTransform.rotation = BulletRota(device_->worldTransform.translation, Vector3(viewTargetMat.m[3][0], viewTargetMat.m[3][1], viewTargetMat.m[3][2]));
+	laser_->worldTransform.scale.x = BulletScale(device_->worldTransform.translation, Vector3(viewTargetMat.m[3][0], viewTargetMat.m[3][1], viewTargetMat.m[3][2]));
+	laser_->worldTransform.translation = BulletTrans(device_->worldTransform.translation, Vector3(viewTargetMat.m[3][0], viewTargetMat.m[3][1], viewTargetMat.m[3][2]));
 
 }
 
@@ -140,9 +146,9 @@ Vector3 Laser::GetAimPos() {
 	//子の為worldTransformではなくワールド行列から取得
 	Vector3 pos;
 
-	pos.x = viewMat.m[3][0];
-	pos.y = viewMat.m[3][1];
-	pos.z = viewMat.m[3][2];
+	pos.x = viewTargetMat.m[3][0];
+	pos.y = viewTargetMat.m[3][1];
+	pos.z = viewTargetMat.m[3][2];
 
 	return pos;
 }

@@ -2,6 +2,7 @@
 #include "GameObject3D.h"
 #include "Input.h"
 #include "MathFunc.h"
+#include "ViewProjection.h"
 
 class Player {
 public:
@@ -27,7 +28,6 @@ public:
 
 	WorldTransform GetWorldTransform() { return player_->worldTransform; }
 
-	Vector3 GetAimPos();
 
 	Vector3 bVelocity(Vector3& velocity, WorldTransform& worldTransform);
 
@@ -38,6 +38,8 @@ public:
 	//ゲッター
 	Vector3 GetAngle() { return angle; }
 	float GetR() { return r; }
+	ViewProjection GetView() { return viewProjection_; }
+	Vector3 GetAimPos();
 
 	//メンバ関数
 private:
@@ -64,9 +66,10 @@ private:
 	//移動速度
 	const float moveSpeed = 0.5f;
 
-//----攻撃----
+//----view----
+	ViewProjection viewProjection_;
 	Vector3 viewTarget; 
-	Matrix4 viewMat;
+	Matrix4 viewTargetMat;
 
 
 //-----制限-----

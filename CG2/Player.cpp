@@ -11,6 +11,9 @@ Player::~Player() {
 
 void Player::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	GetCursorPos(&mousePos);
+	viewProjection_.Initialize();
+	viewProjection_.eye = Vector3{ 0,3,-8 };
+	viewTargetMat.SetIdentityMatrix();
 
 	player_ = new GameObject3D();
 	player_->PreLoadModel("Resources/tofu/player.obj");
@@ -37,22 +40,26 @@ void Player::Update() {
 
 	Attack();
 	
-	player_->Update();
 
 	
-	viewMat.SetIdentityMatrix();
-	viewMat.m[3][0] = viewTarget.x;
-	viewMat.m[3][1] = viewTarget.y;
-	viewMat.m[3][2] = viewTarget.z;
-
-	viewMat *= player_->worldTransform.matWorld;
-
+	viewTargetMat.m[3][0] = viewTarget.x;
+	viewTargetMat.m[3][1] = viewTarget.y;
+	viewTargetMat.m[3][2] = viewTarget.z;
+	viewTargetMat *= player_->worldTransform.matWorld;
 	//aimの制限
 	//y方向の制限
-	if (viewMat.m[3][1] < 0) {
-		viewMat.m[3][1] = 0;
+	if (viewTargetMat.m[3][1] < 0) {
+		viewTargetMat.m[3][1] = 0;
 	}
 
+	viewProjection_.target.x = viewTargetMat.m[3][0];
+	viewProjection_.target.y = viewTargetMat.m[3][1];
+	viewProjection_.target.z = viewTargetMat.m[3][2];
+
+	viewProjection_.UpdateView(GetAimPos(), player_->worldTransform);
+
+
+	player_->Update();
 }
 
 void Player::Draw() {
@@ -160,14 +167,13 @@ void Player::bulletBulletOnCollision()
 {
 }
 
-
 Vector3 Player::GetAimPos() {
 	//子の為worldTransformではなくワールド行列から取得
 	Vector3 pos;
-	
-	pos.x = viewMat.m[3][0];
-	pos.y = viewMat.m[3][1];
-	pos.z = viewMat.m[3][2];
+
+	pos.x = viewTargetMat.m[3][0];
+	pos.y = viewTargetMat.m[3][1];
+	pos.z = viewTargetMat.m[3][2];
 
 	return pos;
 }
