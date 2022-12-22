@@ -16,7 +16,7 @@ public:
 	//デストラクタ
 	~Laser();
 
-	void Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection,int colour);
+	void Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection,int colour,Vector3 pos);
 
 	void Update();
 
@@ -42,6 +42,7 @@ public:
 	Vector3 GetAngle() { return angle; };
 	ViewProjection GetView() { return viewProjection_; }
 	Ray *GetRay() { return ray; }
+	Vector3 GetPos() { return device_->worldTransform.translation; }
 
 	//メンバ関数
 private:
@@ -83,16 +84,6 @@ private:
 
 
 	//-------
-	//Plane frontPlane;
-	//Plane backPlane;
-	//Plane leftPlane;
-	//Plane rightPlane;
-	//Plane upPlane;
-	//Plane downPlane;
 
 	Ray ray[10];
-
-
-	//Block* block;
-	//Mirror* mirror;
 };

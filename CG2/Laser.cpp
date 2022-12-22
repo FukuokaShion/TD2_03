@@ -16,7 +16,7 @@ Laser::~Laser() {
 	delete device_;
 }
 
-void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, int colour) {
+void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, int colour,Vector3 pos) {
 	GetCursorPos(&mousePos);
 	viewProjection_.Initialize();
 	viewProjection_.eye = Vector3{ 0,1.5f,0 };
@@ -28,67 +28,43 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 	device_->SetViewProjection(viewProjection);
 	device_->SetMatProjection(matProjection);
 	device_->Initialize();
-	device_->worldTransform.translation = { 0,0,0 };
+	device_->worldTransform.translation = pos;
 
-	for (int i = 0; i < 10; i++) {
-		laser_[i] = new GameObject3D();
-		laser_[i]->PreLoadModel("Resources/tofu/tofu.obj");
-		laser_[i]->PreLoadTexture(L"Resources/redLaser.png");
-		laser_[i]->SetViewProjection(viewProjection);
-		laser_[i]->SetMatProjection(matProjection);
-		laser_[i]->Initialize();
-		laser_[i]->worldTransform.scale = { 1,0.3f ,0.3f };
-		
+	if (colour == 0) {
+		for (int i = 0; i < 10; i++) {
+			laser_[i] = new GameObject3D();
+			laser_[i]->PreLoadModel("Resources/tofu/tofu.obj");
+			laser_[i]->PreLoadTexture(L"Resources/redLaser.png");
+			laser_[i]->SetViewProjection(viewProjection);
+			laser_[i]->SetMatProjection(matProjection);
+			laser_[i]->Initialize();
+			laser_[i]->worldTransform.scale = { 1,0.3f ,0.3f };
+
+		}
+	}if (colour == 1) {
+		for (int i = 0; i < 10; i++) {
+			laser_[i] = new GameObject3D();
+			laser_[i]->PreLoadModel("Resources/tofu/tofu.obj");
+			laser_[i]->PreLoadTexture(L"Resources/greenLaser.png");
+			laser_[i]->SetViewProjection(viewProjection);
+			laser_[i]->SetMatProjection(matProjection);
+			laser_[i]->Initialize();
+			laser_[i]->worldTransform.scale = { 1,0.3f ,0.3f };
+
+		}
+	}if (colour == 2) {
+		for (int i = 0; i < 10; i++) {
+			laser_[i] = new GameObject3D();
+			laser_[i]->PreLoadModel("Resources/tofu/tofu.obj");
+			laser_[i]->PreLoadTexture(L"Resources/blueLaser.png");
+			laser_[i]->SetViewProjection(viewProjection);
+			laser_[i]->SetMatProjection(matProjection);
+			laser_[i]->Initialize();
+			laser_[i]->worldTransform.scale = { 1,0.3f ,0.3f };
+
+		}
 	}
 
-
-	//frontPlane.normal = { 0, 0, -1 };
-	//frontPlane.distance = -40.0f;
-	//frontPlane.pos = { 0,20,40 };
-	//frontPlane.size = { 40,20,0 };
-
-
-	//backPlane.normal = { 0, 0, 1 };
-	//backPlane.distance = -40.0f;
-	//backPlane.pos = { 0,20,-40 };
-	//backPlane.size = { 40,20,0 };
-
-	//leftPlane.normal = { 1, 0, 0};
-	//leftPlane.distance = -40.0f;
-	//leftPlane.pos = { -40,20,0 };
-	//leftPlane.size = { 0,20,40 };
-
-	//rightPlane.normal = { -1, 0, 0 };
-	//rightPlane.distance = -40.0f;
-	//rightPlane.pos = { 40,20,0 };
-	//rightPlane.size = { 0,20,40 };
-
-	//upPlane.normal = { 0, -1, 0 };
-	//upPlane.distance = -40.0f;
-	//upPlane.pos = { 0,40,0 };
-	//upPlane.size = { 40,0,40 };
-
-	//downPlane.normal = { 0, 1, 0};
-	//downPlane.distance = -1.0f;
-	//downPlane.pos = { 0,-1,0 };
-	//downPlane.size = { 40,0,40 };
-
-	////----------
-	//block = new Block();
-	//WorldTransform blockworld;
-	//blockworld.initialize();
-	//blockworld.translation = { -5,0,15 };
-	//blockworld.scale = { 1,1,1 };
-	//block->Initialize(viewProjection, matProjection, blockworld);
-
-
-
-	//mirror = new Mirror();
-	//WorldTransform mirrorworld;
-	//mirrorworld.initialize();
-	//mirrorworld.translation = { 5,0,15 };
-	//mirrorworld.scale = { 1,1,1 };
-	//mirror->Initialize(viewProjection, matProjection, mirrorworld);
 }
 
 void Laser::Reset() {
@@ -116,13 +92,11 @@ void Laser::Update() {
 	viewProjection_.target.z = viewTargetMat.m[3][2];
 
 	viewProjection_.UpdateView(GetAimPos(), device_->worldTransform);
+
 	for (int i = 0; i < 10; i++) {
 		laser_[i]->Update();
 	}
 	
-
-	/*block->Update();
-	mirror->Update();*/
 }
 
 void Laser::Draw() {
@@ -131,8 +105,6 @@ void Laser::Draw() {
 		laser_[i]->Draw();
 	}
 	
-	//block->Draw();
-	//mirror->Draw();
 }
 
 void Laser::Rotate() {
@@ -190,29 +162,6 @@ void Laser::Rotate() {
 
 	float dis;
 
-	/*for (int i = 0; i < 9; i++) {
-		dis = 512.0f;
-
-		Collision::CheckRay2Plane(ray[i], ray[i + 1], frontPlane, &dis);
-		Collision::CheckRay2Plane(ray[i], ray[i + 1], backPlane, &dis);
-		Collision::CheckRay2Plane(ray[i], ray[i + 1], leftPlane, &dis);
-		Collision::CheckRay2Plane(ray[i], ray[i + 1], rightPlane, &dis);
-		Collision::CheckRay2Plane(ray[i], ray[i + 1], upPlane, &dis);
-		Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, &dis);
-
-		block->CheckCollision(ray, i, &dis);
-		mirror->CheckCollision(ray, i, &dis);
-
-
-		laser_[i]->worldTransform.rotation = BulletRota(ray[i].start, ray[i + 1].start);
-		laser_[i]->worldTransform.scale.x = BulletScale(ray[i].start, ray[i + 1].start);
-		laser_[i]->worldTransform.translation = BulletTrans(ray[i].start, ray[i + 1].start);
-
-		if (ray[i + 1].isReflection == false) {
-			reflection = i;
-			break;
-		}
-	}*/
 
 }
 

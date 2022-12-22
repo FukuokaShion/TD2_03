@@ -21,7 +21,7 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; };
 
-	bool GetIsControlRLaser() { return isControlRLaser; }
+	bool GetIsControlLaser();
 
 	ViewProjection GetView();
 
@@ -43,6 +43,14 @@ private:
 
 	Laser* rLaser = nullptr;
 	bool isControlRLaser = false;
+
+
+	Laser* gLaser = nullptr;
+	bool isControlGLaser = false;
+
+	Laser* bLaser = nullptr;
+	bool isControlBLaser = false;
+
 
 
 

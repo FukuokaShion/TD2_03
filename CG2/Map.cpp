@@ -11,7 +11,11 @@ Map::~Map() {
 
 void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	rLaser = new Laser();
-	rLaser->Initialize(viewProjection, matProjection, Colour::RED);
+	rLaser->Initialize(viewProjection, matProjection, Colour::RED, { -8,0,0 });
+	gLaser = new Laser();
+	gLaser->Initialize(viewProjection, matProjection, Colour::GREEN,{ 0,0,0 });
+	bLaser = new Laser();
+	bLaser->Initialize(viewProjection, matProjection, Colour::BLUE, { 8,0,0 });
 
 	wallObject = new GameObject3D();
 	wallObject->PreLoadModel("Resources/colosseum/colosseum_Ver2.obj");
@@ -77,7 +81,8 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 
 void Map::Reset(int stage) {
 	rLaser->Reset();
-
+	gLaser->Reset();
+	bLaser->Reset();
 }
 
 void Map::Update() {
@@ -85,8 +90,9 @@ void Map::Update() {
 	WorldTransform playerWoorldTransform = player_->GetWorldTransform();
 	float playerR = player_->GetR();
 
-	if (playerWoorldTransform.translation.x + playerR >= -1 && playerWoorldTransform.translation.x-playerR<=1&&
-		playerWoorldTransform.translation.z + playerR >= -1 && playerWoorldTransform.translation.z - playerR <= 1){
+	Vector3 rPos = rLaser->GetPos();
+	if (playerWoorldTransform.translation.x + playerR >= rPos.x-1 && playerWoorldTransform.translation.x-playerR<= rPos.x + 1&&
+		playerWoorldTransform.translation.z + playerR >= rPos.z -1 && playerWoorldTransform.translation.z - playerR <= rPos.z + 1){
 		if (input.TriggerKey(DIK_SPACE)) {
 			if (isControlRLaser) {
 				isControlRLaser = false;
@@ -126,7 +132,101 @@ void Map::Update() {
 
 		rLaser->Affine();
 	}
+
+
+	Vector3 gPos = gLaser->GetPos();
+	if (playerWoorldTransform.translation.x + playerR >= gPos.x - 1 && playerWoorldTransform.translation.x - playerR <= gPos.x + 1 &&
+		playerWoorldTransform.translation.z + playerR >= gPos.z - 1 && playerWoorldTransform.translation.z - playerR <= gPos.z + 1) {
+		if (input.TriggerKey(DIK_SPACE)) {
+			if (isControlGLaser) {
+				isControlGLaser = false;
+			}
+			else if (isControlGLaser == false) {
+				isControlGLaser = true;
+			}
+		}
+	}
+	else {
+		isControlGLaser = false;
+	}
+
+	if (isControlGLaser) {
+		gLaser->Rotate();
+		float dis;
+		for (int i = 0; i < 9; i++) {
+			dis = 512.0f;
+
+			Ray* ray = gLaser->GetRay();
+
+			Collision::CheckRay2Plane(ray[i], ray[i + 1], frontPlane, &dis);
+			Collision::CheckRay2Plane(ray[i], ray[i + 1], backPlane, &dis);
+			Collision::CheckRay2Plane(ray[i], ray[i + 1], leftPlane, &dis);
+			Collision::CheckRay2Plane(ray[i], ray[i + 1], rightPlane, &dis);
+			Collision::CheckRay2Plane(ray[i], ray[i + 1], upPlane, &dis);
+			Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, &dis);
+
+			block->CheckCollision(ray, i, &dis);
+			mirror->CheckCollision(ray, i, &dis);
+
+
+			gLaser->reflection = i;
+
+			if (ray[i + 1].isReflection == false) {
+				break;
+			}
+		}
+
+		gLaser->Affine();
+	}
+
+	Vector3 bPos = bLaser->GetPos();
+	if (playerWoorldTransform.translation.x + playerR >= bPos.x - 1 && playerWoorldTransform.translation.x - playerR <= bPos.x + 1 &&
+		playerWoorldTransform.translation.z + playerR >= bPos.z - 1 && playerWoorldTransform.translation.z - playerR <= bPos.z + 1) {
+		if (input.TriggerKey(DIK_SPACE)) {
+			if (isControlBLaser) {
+				isControlBLaser = false;
+			}
+			else if (isControlBLaser == false) {
+				isControlBLaser = true;
+			}
+		}
+	}
+	else {
+		isControlBLaser = false;
+	}
+
+	if (isControlBLaser) {
+		bLaser->Rotate();
+		float dis;
+		for (int i = 0; i < 9; i++) {
+			dis = 512.0f;
+
+			Ray* ray = bLaser->GetRay();
+
+			Collision::CheckRay2Plane(ray[i], ray[i + 1], frontPlane, &dis);
+			Collision::CheckRay2Plane(ray[i], ray[i + 1], backPlane, &dis);
+			Collision::CheckRay2Plane(ray[i], ray[i + 1], leftPlane, &dis);
+			Collision::CheckRay2Plane(ray[i], ray[i + 1], rightPlane, &dis);
+			Collision::CheckRay2Plane(ray[i], ray[i + 1], upPlane, &dis);
+			Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, &dis);
+
+			block->CheckCollision(ray, i, &dis);
+			mirror->CheckCollision(ray, i, &dis);
+
+
+			bLaser->reflection = i;
+
+			if (ray[i + 1].isReflection == false) {
+				break;
+			}
+		}
+
+		bLaser->Affine();
+	}
+
 	rLaser->Update();
+	gLaser->Update();
+	bLaser->Update();
 
 
 	block->Update();
@@ -135,17 +235,35 @@ void Map::Update() {
 
 void Map::Draw() {
 	rLaser->Draw();
+	gLaser->Draw();
+	bLaser->Draw();
 	wallObject->Draw();
 	block->Draw();
 	mirror->Draw();
 }
 
+bool Map::GetIsControlLaser() {
+	if (isControlRLaser) {
+		return true;
+	}if (isControlGLaser) {
+		return true;
+	}if (isControlBLaser) {
+		return true;
+	}
+	return false;
+}
+
 ViewProjection Map::GetView() {
 	ViewProjection viewProjection;
 
-	if (isControlRLaser) {
+	if (isControlRLaser == true) {
 		viewProjection = rLaser->GetView();
 	}
-
+	if (isControlGLaser == true) {
+		viewProjection = gLaser->GetView();
+	}
+	if (isControlBLaser == true) {
+		viewProjection = bLaser->GetView();
+	}
 	return viewProjection;
 }
