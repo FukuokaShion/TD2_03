@@ -64,14 +64,10 @@ void GameScene::Update() {
 			
 		}
 		
-
-
 		break;
 	case Scene::Play:
 
 		map->Update();
-
-
 
 		//------カメラ-----
 			//情報取得
@@ -85,7 +81,6 @@ void GameScene::Update() {
 			player_->Move();
 			viewProjection_ = player_->GetView();
 		}
-
 
 		break;
 	case Scene::Clear:

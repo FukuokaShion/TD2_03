@@ -10,6 +10,7 @@ Map::~Map() {
 }
 
 void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
+	//レーザー
 	rLaser = new Laser();
 	rLaser->Initialize(viewProjection, matProjection, Colour::RED, { -8,0,0 });
 	gLaser = new Laser();
@@ -17,6 +18,7 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	bLaser = new Laser();
 	bLaser->Initialize(viewProjection, matProjection, Colour::BLUE, { 8,0,0 });
 
+//------------デバッグ用壁----------------
 	wallObject = new GameObject3D();
 	wallObject->PreLoadModel("Resources/colosseum/colosseum_Ver2.obj");
 	wallObject->PreLoadTexture(L"Resources/colosseum/wall.png");
@@ -33,7 +35,6 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	frontPlane.distance = -40.0f;
 	frontPlane.pos = { 0,20,40 };
 	frontPlane.size = { 40,20,0 };
-
 
 	backPlane.normal = { 0, 0, 1 };
 	backPlane.distance = -40.0f;
@@ -60,8 +61,9 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	downPlane.pos = { 0,-1,0 };
 	downPlane.size = { 40,0,40 };
 
+//----------------------------
 
-
+	//ブロック
 	block = new Block();
 	WorldTransform blockworld;
 	blockworld.initialize();
@@ -69,8 +71,7 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	blockworld.scale = { 1,1,1 };
 	block->Initialize(viewProjection, matProjection, blockworld);
 
-
-
+	//鏡
 	mirror = new Mirror();
 	WorldTransform mirrorworld;
 	mirrorworld.initialize();
@@ -79,6 +80,7 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	mirror->Initialize(viewProjection, matProjection, mirrorworld);
 }
 
+//初期化
 void Map::Reset(int stage) {
 	rLaser->Reset();
 	gLaser->Reset();
@@ -86,32 +88,55 @@ void Map::Reset(int stage) {
 }
 
 void Map::Update() {
+	//デバッグ用壁
 	wallObject->Update();
+	
+	//プレイヤーの情報取得
+	//プレイヤー座標
 	WorldTransform playerWoorldTransform = player_->GetWorldTransform();
+	//プレイヤーサイズ
 	float playerR = player_->GetR();
 
+//------------------------------レーザー処理-------------------------
+	//レーザー装置座標取得
 	Vector3 rPos = rLaser->GetPos();
+	//レーザー装置とプレイヤーが接触しているか
 	if (playerWoorldTransform.translation.x + playerR >= rPos.x-1 && playerWoorldTransform.translation.x-playerR<= rPos.x + 1&&
 		playerWoorldTransform.translation.z + playerR >= rPos.z -1 && playerWoorldTransform.translation.z - playerR <= rPos.z + 1){
+		//スペースを押したか(トリガー)
 		if (input.TriggerKey(DIK_SPACE)) {
+			//直前で操作しているなら
 			if (isControlRLaser) {
+				//操作をやめる
 				isControlRLaser = false;
-			}else if (isControlRLaser == false) {
+			}
+			//直前で操作していないなら
+			else if (isControlRLaser == false) {
+				//操作する
 				isControlRLaser = true;
 			}
 		}
 	}else {
+		//接触していないなら操作はできない
 		isControlRLaser = false;
 	}
 
+//-----レーザーの更新--------
+	//操作しているなら
 	if (isControlRLaser) {
+		//レーザー装置の回転
 		rLaser->Rotate();
+
 		float dis;
+
+		//レーザー全てのレイにおいて
 		for (int i = 0; i < 9; i++) {
 			dis = 512.0f;
 
+			//レイを取得
 			Ray* ray = rLaser->GetRay();
 
+			//レイと壁の当たり判定
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], frontPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], backPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], leftPlane, &dis);
@@ -119,17 +144,21 @@ void Map::Update() {
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], upPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, &dis);
 
+			//レイとブロックの当たり判定
 			block->CheckCollision(ray, i, &dis);
+
+			//レイと鏡の当たり判定
 			mirror->CheckCollision(ray, i, &dis);
 
-
+			//反射回数を更新
 			rLaser->reflection = i;
 
+			//反射できていなかったら
 			if (ray[i + 1].isReflection == false) {
 				break;
 			}
 		}
-
+		//レーザー更新
 		rLaser->Affine();
 	}
 
@@ -224,10 +253,10 @@ void Map::Update() {
 		bLaser->Affine();
 	}
 
+	//更新
 	rLaser->Update();
 	gLaser->Update();
 	bLaser->Update();
-
 
 	block->Update();
 	mirror->Update();
@@ -242,6 +271,7 @@ void Map::Draw() {
 	mirror->Draw();
 }
 
+//操作しているか
 bool Map::GetIsControlLaser() {
 	if (isControlRLaser) {
 		return true;
@@ -253,9 +283,11 @@ bool Map::GetIsControlLaser() {
 	return false;
 }
 
+//始点切り替え
 ViewProjection Map::GetView() {
 	ViewProjection viewProjection;
 
+	//操作している装置の視点に切り替え
 	if (isControlRLaser == true) {
 		viewProjection = rLaser->GetView();
 	}

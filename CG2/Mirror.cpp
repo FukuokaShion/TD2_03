@@ -34,7 +34,6 @@ void Mirror::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection,
 	frontPlane.size.y = worldTransform.scale.y;
 	frontPlane.size.z = 0;
 
-
 	//Œã‚ë
 	backPlane.normal = { 0, 0, -1 };
 

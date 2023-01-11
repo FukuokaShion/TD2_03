@@ -45,7 +45,6 @@ private: // メンバ変数
 
 	ViewProjection viewProjection_;
 
-
 	enum class Scene
 	{
 		Title,
@@ -67,6 +66,7 @@ private: // メンバ変数
 	Player* player_ = nullptr;
 	WorldTransform playerWorldTransform;
 
+	//マップ
 	Map* map = nullptr;
 	
 };

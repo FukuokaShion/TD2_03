@@ -28,16 +28,17 @@ public:
 
 	void Reset();
 
-	WorldTransform GetWorldTransform() { return device_->worldTransform; }
 
-	Vector3 GetAimPos();
-
+	//向いている向きにベクトル変更
 	Vector3 bVelocity(Vector3& velocity, WorldTransform& worldTransform);
 
+	//衝突後処理
 	void OnCollision();
 
 
 	//ゲッター
+	Vector3 GetAimPos();
+	WorldTransform GetWorldTransform() { return device_->worldTransform; }
 	float GetRadius() { return laser_[0]->worldTransform.scale.y; }
 	Vector3 GetAngle() { return angle; };
 	ViewProjection GetView() { return viewProjection_; }
@@ -49,11 +50,12 @@ private:
 
 
 public:
-
+	//反射回数
 	int reflection;
+
 	//メンバ変数
 private:
-	//キー入力
+	//入力
 	Input& input = Input::GetInstance();
 	POINT mousePos;
 	POINT oldMousePos;
@@ -73,6 +75,7 @@ private:
 	GameObject3D* laser_[10];
 	bool isLaserDead = true;
 
+	//視点
 	ViewProjection viewProjection_;
 	Vector3 viewTarget;
 	Matrix4 viewTargetMat;

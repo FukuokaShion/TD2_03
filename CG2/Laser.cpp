@@ -22,6 +22,7 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 	viewProjection_.eye = Vector3{ 0,1.5f,0 };
 	viewTargetMat.SetIdentityMatrix();
 
+	//装置モデル初期設定
 	device_ = new GameObject3D();
 	device_->PreLoadModel("Resources/tofu/tofu.obj");
 	device_->PreLoadTexture(L"Resources/tofu/enemy.png");
@@ -30,6 +31,8 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 	device_->Initialize();
 	device_->worldTransform.translation = pos;
 
+//---------レーザーモデル初期設定------------
+	//Redレーザー
 	if (colour == 0) {
 		for (int i = 0; i < 10; i++) {
 			laser_[i] = new GameObject3D();
@@ -39,9 +42,10 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 			laser_[i]->SetMatProjection(matProjection);
 			laser_[i]->Initialize();
 			laser_[i]->worldTransform.scale = { 1,0.3f ,0.3f };
-
 		}
-	}if (colour == 1) {
+	}
+	//Greenレーザー
+	if (colour == 1) {
 		for (int i = 0; i < 10; i++) {
 			laser_[i] = new GameObject3D();
 			laser_[i]->PreLoadModel("Resources/tofu/tofu.obj");
@@ -50,9 +54,10 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 			laser_[i]->SetMatProjection(matProjection);
 			laser_[i]->Initialize();
 			laser_[i]->worldTransform.scale = { 1,0.3f ,0.3f };
-
 		}
-	}if (colour == 2) {
+	}
+	//Blueレーザー
+	if (colour == 2) {
 		for (int i = 0; i < 10; i++) {
 			laser_[i] = new GameObject3D();
 			laser_[i]->PreLoadModel("Resources/tofu/tofu.obj");
@@ -61,12 +66,12 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 			laser_[i]->SetMatProjection(matProjection);
 			laser_[i]->Initialize();
 			laser_[i]->worldTransform.scale = { 1,0.3f ,0.3f };
-
 		}
 	}
 
 }
 
+//初期化
 void Laser::Reset() {
 	device_->worldTransform.rotation = { 0 , 0 , 0 };
 	//aimは本体の子
@@ -80,19 +85,26 @@ void Laser::Reset() {
 void Laser::Update() {
 	device_->Update();
 
+//--------視点変更----------
+	//注視点行列
 	viewTargetMat.SetIdentityMatrix();
+	//注視点のローカル座標を代入
 	viewTargetMat.m[3][0] = viewTarget.x;
 	viewTargetMat.m[3][1] = viewTarget.y;
 	viewTargetMat.m[3][2] = viewTarget.z;
-
+	//子だから装置のワールド行列をかける
 	viewTargetMat *= device_->worldTransform.matWorld;
 
+	//得た注視点座標をviewに保存
 	viewProjection_.target.x = viewTargetMat.m[3][0];
 	viewProjection_.target.y = viewTargetMat.m[3][1];
 	viewProjection_.target.z = viewTargetMat.m[3][2];
 
+	//view更新
 	viewProjection_.UpdateView(GetAimPos(), device_->worldTransform);
+//----------------------
 
+	//レーザー更新
 	for (int i = 0; i < 10; i++) {
 		laser_[i]->Update();
 	}
@@ -151,6 +163,7 @@ void Laser::Rotate() {
 
 
 //-------------------------
+	//視点に合わせて一番目のレイを更新
 	ray[0].start = device_->worldTransform.translation;
 	Vector3 vec;
 	vec.x = viewTargetMat.m[3][0] - device_->worldTransform.translation.x;
@@ -161,11 +174,10 @@ void Laser::Rotate() {
 	ray[0].dir = vec;
 
 	float dis;
-
-
 }
 
 void Laser::Affine() {
+	//反射しているレーザー全てをアフィン変換
 	for (int i = 0; i < reflection + 1; i++) {
 		laser_[i]->worldTransform.rotation = BulletRota(ray[i].start, ray[i + 1].start);
 		laser_[i]->worldTransform.scale.x = BulletScale(ray[i].start, ray[i + 1].start);

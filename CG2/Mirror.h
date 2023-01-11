@@ -13,13 +13,15 @@ public:
 
 	void Update();
 
+	//rayと平面判定
 	void CheckCollision(Ray* ray, int i, float* dis);
 
 	void Draw();
 
-
+	//オブジェクト
 	GameObject3D* obj;
 
+	//当たり判定
 	Plane frontPlane;
 	Plane backPlane;
 	Plane leftPlane;
