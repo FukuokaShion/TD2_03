@@ -36,7 +36,7 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 	if (colour == 0) {
 		for (int i = 0; i < 10; i++) {
 			laser_[i] = new GameObject3D();
-			laser_[i]->PreLoadModel("Resources/tofu/tofu.obj");
+			laser_[i]->PreLoadModel("Resources/cylinder/cylinder.obj");
 			laser_[i]->PreLoadTexture(L"Resources/redLaser.png");
 			laser_[i]->SetViewProjection(viewProjection);
 			laser_[i]->SetMatProjection(matProjection);
@@ -48,7 +48,7 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 	if (colour == 1) {
 		for (int i = 0; i < 10; i++) {
 			laser_[i] = new GameObject3D();
-			laser_[i]->PreLoadModel("Resources/tofu/tofu.obj");
+			laser_[i]->PreLoadModel("Resources/cylinder/cylinder.obj");
 			laser_[i]->PreLoadTexture(L"Resources/greenLaser.png");
 			laser_[i]->SetViewProjection(viewProjection);
 			laser_[i]->SetMatProjection(matProjection);
@@ -60,7 +60,7 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 	if (colour == 2) {
 		for (int i = 0; i < 10; i++) {
 			laser_[i] = new GameObject3D();
-			laser_[i]->PreLoadModel("Resources/tofu/tofu.obj");
+			laser_[i]->PreLoadModel("Resources/cylinder/cylinder.obj");
 			laser_[i]->PreLoadTexture(L"Resources/blueLaser.png");
 			laser_[i]->SetViewProjection(viewProjection);
 			laser_[i]->SetMatProjection(matProjection);

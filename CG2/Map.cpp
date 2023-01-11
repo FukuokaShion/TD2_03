@@ -88,7 +88,7 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	crystal->Initialize(viewProjection, matProjection, crystalworld);
 }
 
-//‰Šú‰»
+
 void Map::Reset(int stage) {
 	rLaser->Reset();
 	gLaser->Reset();
