@@ -75,7 +75,7 @@ void GameScene::Update() {
 
 		//------カメラ-----
 			//情報取得
-		if (map->GetIsControlRLaser()) {
+		if (map->GetIsControlLaser()) {
 			player_->Update();
 			viewProjection_ = map->GetView();
 		}else {

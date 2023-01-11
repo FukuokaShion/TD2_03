@@ -142,6 +142,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="Block.cpp" />
+    <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="Crystal.cpp" />
     <ClCompile Include="DX12base.cpp" />
     <ClCompile Include="FPS.cpp" />
     <ClCompile Include="GameObject3D.cpp" />
@@ -150,6 +153,7 @@
     <ClCompile Include="Laser.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Mirror.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -203,6 +207,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Audio.h" />
+    <ClInclude Include="Block.h" />
+    <ClInclude Include="Collision.h" />
+    <ClInclude Include="CollisionPrimitive.h" />
+    <ClInclude Include="Crystal.h" />
     <ClInclude Include="DX12base.h" />
     <ClInclude Include="ErrorException.h" />
     <ClInclude Include="FPS.h" />
@@ -211,6 +219,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Laser.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Mirror.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Player.h" />

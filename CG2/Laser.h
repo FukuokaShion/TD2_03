@@ -3,6 +3,11 @@
 #include "Input.h"
 #include "MathFunc.h"
 #include "ViewProjection.h"
+#include"CollisionPrimitive.h"
+
+#include"Block.h"
+#include"Mirror.h"
+
 
 class Laser {
 public:
@@ -11,11 +16,13 @@ public:
 	//デストラクタ
 	~Laser();
 
-	void Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection,int colour);
+	void Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection,int colour,Vector3 pos);
 
 	void Update();
 
 	void Rotate();
+
+	void Affine();
 
 	void Draw();
 
@@ -29,14 +36,21 @@ public:
 
 	void OnCollision();
 
+
 	//ゲッター
-	float GetRadius() { return laser_->worldTransform.scale.y; }
+	float GetRadius() { return laser_[0]->worldTransform.scale.y; }
 	Vector3 GetAngle() { return angle; };
 	ViewProjection GetView() { return viewProjection_; }
-	
+	Ray *GetRay() { return ray; }
+	Vector3 GetPos() { return device_->worldTransform.translation; }
+
 	//メンバ関数
 private:
 
+
+public:
+
+	int reflection;
 	//メンバ変数
 private:
 	//キー入力
@@ -56,7 +70,8 @@ private:
 
 
 	//----攻撃----
-	GameObject3D* laser_ = nullptr;
+	GameObject3D* laser_[10];
+	bool isLaserDead = true;
 
 	ViewProjection viewProjection_;
 	Vector3 viewTarget;
@@ -67,4 +82,8 @@ private:
 	const float aimDistance = 10;
 	float theta;
 
+
+	//-------
+
+	Ray ray[10];
 };

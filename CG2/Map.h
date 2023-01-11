@@ -2,6 +2,8 @@
 #include"Laser.h"
 #include"Player.h"
 
+#include"Block.h"
+
 class Player;
 
 class Map {
@@ -19,7 +21,7 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; };
 
-	bool GetIsControlRLaser() { return isControlRLaser; }
+	bool GetIsControlLaser();
 
 	ViewProjection GetView();
 
@@ -27,9 +29,10 @@ private:
 	//ÉLÅ[ì¸óÕ
 	Input& input = Input::GetInstance();
 
-
-
 	Player* player_ = nullptr;
+
+
+	GameObject3D* wallObject = nullptr;
 
 	enum Colour
 	{
@@ -42,5 +45,24 @@ private:
 	bool isControlRLaser = false;
 
 
+	Laser* gLaser = nullptr;
+	bool isControlGLaser = false;
+
+	Laser* bLaser = nullptr;
+	bool isControlBLaser = false;
+
+
+
+
+	Plane frontPlane;
+	Plane backPlane;
+	Plane leftPlane;
+	Plane rightPlane;
+	Plane upPlane;
+	Plane downPlane;
+
+
+	Block* block;
+	Mirror* mirror;
 
 };

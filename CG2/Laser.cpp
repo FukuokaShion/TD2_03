@@ -1,5 +1,7 @@
 #include "Laser.h"
 #include <cmath>
+#include"Collision.h"
+
 
 Vector3 BulletRota(Vector3 pos1, Vector3 pos2);
 Vector3 BulletTrans(Vector3 pos1, Vector3 pos2);
@@ -14,26 +16,54 @@ Laser::~Laser() {
 	delete device_;
 }
 
-void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, int colour) {
+void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, int colour,Vector3 pos) {
 	GetCursorPos(&mousePos);
 	viewProjection_.Initialize();
 	viewProjection_.eye = Vector3{ 0,1.5f,0 };
 	viewTargetMat.SetIdentityMatrix();
 
 	device_ = new GameObject3D();
-	device_->PreLoadModel("Resources/tofu/player.obj");
-	device_->PreLoadTexture(L"Resources/tofu/player.png");
+	device_->PreLoadModel("Resources/tofu/tofu.obj");
+	device_->PreLoadTexture(L"Resources/tofu/enemy.png");
 	device_->SetViewProjection(viewProjection);
 	device_->SetMatProjection(matProjection);
 	device_->Initialize();
+	device_->worldTransform.translation = pos;
 
-	laser_ = new GameObject3D();
-	laser_->PreLoadModel("Resources/tofu/tofu.obj");
-	laser_->PreLoadTexture(L"Resources/bullet.png");
-	laser_->SetViewProjection(viewProjection);
-	laser_->SetMatProjection(matProjection);
-	laser_->Initialize();
-	laser_->worldTransform.scale = { 1,0.3f ,0.3f };
+	if (colour == 0) {
+		for (int i = 0; i < 10; i++) {
+			laser_[i] = new GameObject3D();
+			laser_[i]->PreLoadModel("Resources/tofu/tofu.obj");
+			laser_[i]->PreLoadTexture(L"Resources/redLaser.png");
+			laser_[i]->SetViewProjection(viewProjection);
+			laser_[i]->SetMatProjection(matProjection);
+			laser_[i]->Initialize();
+			laser_[i]->worldTransform.scale = { 1,0.3f ,0.3f };
+
+		}
+	}if (colour == 1) {
+		for (int i = 0; i < 10; i++) {
+			laser_[i] = new GameObject3D();
+			laser_[i]->PreLoadModel("Resources/tofu/tofu.obj");
+			laser_[i]->PreLoadTexture(L"Resources/greenLaser.png");
+			laser_[i]->SetViewProjection(viewProjection);
+			laser_[i]->SetMatProjection(matProjection);
+			laser_[i]->Initialize();
+			laser_[i]->worldTransform.scale = { 1,0.3f ,0.3f };
+
+		}
+	}if (colour == 2) {
+		for (int i = 0; i < 10; i++) {
+			laser_[i] = new GameObject3D();
+			laser_[i]->PreLoadModel("Resources/tofu/tofu.obj");
+			laser_[i]->PreLoadTexture(L"Resources/blueLaser.png");
+			laser_[i]->SetViewProjection(viewProjection);
+			laser_[i]->SetMatProjection(matProjection);
+			laser_[i]->Initialize();
+			laser_[i]->worldTransform.scale = { 1,0.3f ,0.3f };
+
+		}
+	}
 
 }
 
@@ -41,7 +71,9 @@ void Laser::Reset() {
 	device_->worldTransform.rotation = { 0 , 0 , 0 };
 	//aim‚Í–{‘Ì‚ÌŽq
 	viewTarget = { 0,0,10 };
-	laser_->worldTransform.translation = { 0 , 0 , 0 };
+	for (int i = 0; i < 10; i++) {
+		laser_[i]->worldTransform.translation = {0 , 0 , 0};
+	}
 	theta = 0;
 }
 
@@ -60,12 +92,19 @@ void Laser::Update() {
 	viewProjection_.target.z = viewTargetMat.m[3][2];
 
 	viewProjection_.UpdateView(GetAimPos(), device_->worldTransform);
-	laser_->Update();
+
+	for (int i = 0; i < 10; i++) {
+		laser_[i]->Update();
+	}
+	
 }
 
 void Laser::Draw() {
 	device_->Draw();
-	laser_->Draw();
+	for (int i = 0; i < reflection + 1; i++) {
+		laser_[i]->Draw();
+	}
+	
 }
 
 void Laser::Rotate() {
@@ -110,12 +149,29 @@ void Laser::Rotate() {
 	}
 
 
-	laser_->worldTransform.rotation = BulletRota(device_->worldTransform.translation, Vector3(viewTargetMat.m[3][0], viewTargetMat.m[3][1], viewTargetMat.m[3][2]));
-	laser_->worldTransform.scale.x = BulletScale(device_->worldTransform.translation, Vector3(viewTargetMat.m[3][0], viewTargetMat.m[3][1], viewTargetMat.m[3][2]));
-	laser_->worldTransform.translation = BulletTrans(device_->worldTransform.translation, Vector3(viewTargetMat.m[3][0], viewTargetMat.m[3][1], viewTargetMat.m[3][2]));
+
+//-------------------------
+	ray[0].start = device_->worldTransform.translation;
+	Vector3 vec;
+	vec.x = viewTargetMat.m[3][0] - device_->worldTransform.translation.x;
+	vec.y = viewTargetMat.m[3][1] - device_->worldTransform.translation.y;
+	vec.z = viewTargetMat.m[3][2] - device_->worldTransform.translation.z;
+	vec.nomalize();
+
+	ray[0].dir = vec;
+
+	float dis;
+
 
 }
 
+void Laser::Affine() {
+	for (int i = 0; i < reflection + 1; i++) {
+		laser_[i]->worldTransform.rotation = BulletRota(ray[i].start, ray[i + 1].start);
+		laser_[i]->worldTransform.scale.x = BulletScale(ray[i].start, ray[i + 1].start);
+		laser_[i]->worldTransform.translation = BulletTrans(ray[i].start, ray[i + 1].start);
+	}
+}
 
 Vector3 Laser::bVelocity(Vector3& velocity, WorldTransform& worldTransform)
 {
