@@ -84,13 +84,13 @@
     <ClCompile Include="Collision.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Block.cpp">
-      <Filter>Header</Filter>
-    </ClCompile>
     <ClCompile Include="Mirror.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Crystal.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Block.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -173,13 +173,13 @@
     <ClInclude Include="Collision.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="Block.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Mirror.h">
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="Crystal.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>

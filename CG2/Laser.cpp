@@ -77,8 +77,9 @@ void Laser::Reset() {
 	//aim‚Í–{‘Ì‚ÌŽq
 	viewTarget = { 0,0,10 };
 	for (int i = 0; i < 10; i++) {
-		laser_[i]->worldTransform.translation = {0 , 0 , 0};
+		laser_[i]->worldTransform.translation = { 0, -50, 0 };
 	}
+	reflection = 0;
 	theta = 0;
 }
 

@@ -58,10 +58,9 @@ void GameScene::Update() {
 
 		if (input_.TriggerKey(DIK_SPACE)) {
 			//カーソルの非表示
-			scene = Scene::Play;
 			ShowCursor(FALSE);
-
-			
+			map->Reset(0);
+			scene = Scene::Play; 
 		}
 		
 		break;
@@ -80,6 +79,12 @@ void GameScene::Update() {
 			player_->Rotate();
 			player_->Move();
 			viewProjection_ = player_->GetView();
+		}
+
+		//全てのレーザーがクリスタルに当たっているなら
+		if (map->IsHitRLaser() && map->IsHitGLaser() && map->IsHitBLaser()) {
+			//クリア
+			scene = Scene::Clear;
 		}
 
 		break;

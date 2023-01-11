@@ -3,6 +3,7 @@
 #include"Player.h"
 
 #include"Block.h"
+#include"Crystal.h"
 
 class Player;
 
@@ -25,6 +26,10 @@ public:
 	bool GetIsControlLaser();
 	//レーザー操作時の始点切り替え
 	ViewProjection GetView();
+	//レーザーがクリスタルに当たっているか
+	bool IsHitRLaser() { return isHitRLaser; };
+	bool IsHitGLaser() { return isHitGLaser; };
+	bool IsHitBLaser() { return isHitBLaser; };
 
 private:
 	enum Colour
@@ -53,10 +58,17 @@ private:
 	//操作しているか
 	bool isControlBLaser = false;
 
+	//クリスタルに当たっているか
+	bool isHitRLaser = false;
+	bool isHitGLaser = false;
+	bool isHitBLaser = false;
+
 //--------------------
-	
+	//オブジェクト
 	Block* block;
 	Mirror* mirror;
+	Crystal* crystal;
+
 
 	//デバッグ用フィールド
 	GameObject3D* wallObject = nullptr;

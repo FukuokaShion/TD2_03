@@ -78,6 +78,14 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	mirrorworld.translation = { 5,0,15 };
 	mirrorworld.scale = { 1,1,1 };
 	mirror->Initialize(viewProjection, matProjection, mirrorworld);
+
+	//クリスタル
+	crystal = new Crystal();
+	WorldTransform crystalworld;
+	crystalworld.initialize();
+	crystalworld.translation = { 0,4,18 };
+	crystalworld.scale = { 1,1,1 };
+	crystal->Initialize(viewProjection, matProjection, crystalworld);
 }
 
 //初期化
@@ -85,6 +93,9 @@ void Map::Reset(int stage) {
 	rLaser->Reset();
 	gLaser->Reset();
 	bLaser->Reset();
+	isHitRLaser = false;
+	isHitGLaser = false;
+	isHitBLaser = false;
 }
 
 void Map::Update() {
@@ -150,6 +161,9 @@ void Map::Update() {
 			//レイと鏡の当たり判定
 			mirror->CheckCollision(ray, i, &dis);
 
+			//レイとクリスタルの当たり判定
+			isHitRLaser = crystal->CheckCollision(ray, i, &dis);
+
 			//反射回数を更新
 			rLaser->reflection = i;
 
@@ -197,6 +211,7 @@ void Map::Update() {
 			block->CheckCollision(ray, i, &dis);
 			mirror->CheckCollision(ray, i, &dis);
 
+			isHitGLaser = crystal->CheckCollision(ray, i, &dis);
 
 			gLaser->reflection = i;
 
@@ -242,6 +257,7 @@ void Map::Update() {
 			block->CheckCollision(ray, i, &dis);
 			mirror->CheckCollision(ray, i, &dis);
 
+			isHitBLaser = crystal->CheckCollision(ray, i, &dis);
 
 			bLaser->reflection = i;
 
@@ -260,6 +276,7 @@ void Map::Update() {
 
 	block->Update();
 	mirror->Update();
+	crystal->Update();
 }
 
 void Map::Draw() {
@@ -269,6 +286,7 @@ void Map::Draw() {
 	wallObject->Draw();
 	block->Draw();
 	mirror->Draw();
+	crystal->Draw();
 }
 
 //操作しているか
