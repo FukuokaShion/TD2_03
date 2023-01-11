@@ -107,13 +107,27 @@ void Crystal::Update() {
 	obj->Update();
 }
 
-void Crystal::CheckCollision(Ray* ray, int i, float* dis) {
-	Collision::CheckRay2Plane(ray[i], ray[i + 1], frontPlane, dis);
-	Collision::CheckRay2Plane(ray[i], ray[i + 1], backPlane, dis);
-	Collision::CheckRay2Plane(ray[i], ray[i + 1], leftPlane, dis);
-	Collision::CheckRay2Plane(ray[i], ray[i + 1], rightPlane, dis);
-	Collision::CheckRay2Plane(ray[i], ray[i + 1], upPlane, dis);
-	Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, dis);
+bool Crystal::CheckCollision(Ray* ray, int i, float* dis) {
+	bool result = false;
+	if (Collision::CheckRay2Plane(ray[i], ray[i + 1], frontPlane, dis)) {
+		result = true;
+	}
+	if(Collision::CheckRay2Plane(ray[i], ray[i + 1], backPlane, dis)) {
+		result = true;
+	}
+	if(Collision::CheckRay2Plane(ray[i], ray[i + 1], leftPlane, dis)) {
+		result = true;
+	}
+	if(Collision::CheckRay2Plane(ray[i], ray[i + 1], rightPlane, dis)) {
+		result = true;
+	}
+	if(Collision::CheckRay2Plane(ray[i], ray[i + 1], upPlane, dis)) {
+		result = true;
+	}
+	if(Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, dis)) {
+		result = true;
+	}
+	return result;
 }
 
 void Crystal::Draw() {

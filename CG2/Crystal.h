@@ -13,7 +13,7 @@ public:
 
 	void Update();
 
-	void CheckCollision(Ray* ray, int i, float* dis);
+	bool CheckCollision(Ray* ray, int i, float* dis);
 
 	void Draw();
 
