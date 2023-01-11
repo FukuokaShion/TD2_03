@@ -182,7 +182,8 @@ void Laser::Affine() {
 	for (int i = 0; i < reflection + 1; i++) {
 		laser_[i]->worldTransform.rotation = BulletRota(ray[i].start, ray[i + 1].start);
 		laser_[i]->worldTransform.scale.x = BulletScale(ray[i].start, ray[i + 1].start);
-		laser_[i]->worldTransform.translation = BulletTrans(ray[i].start, ray[i + 1].start);
+		laser_[i]->worldTransform.translation = ray[i].start;
+		//laser_[i]->worldTransform.translation = BulletTrans(ray[i].start, ray[i + 1].start);
 	}
 }
 
@@ -264,7 +265,7 @@ Vector3 BulletTrans(Vector3 pos1, Vector3 pos2) {
 
 float BulletScale(Vector3 pos1, Vector3 pos2) {
 	float length;
-	length = sqrt(pow(pos2.x - pos1.x, 2) + pow(pos2.y - pos1.y, 2) + pow(pos2.z - pos1.z, 2)) - 1;
+	length = sqrtf(pow(pos2.x - pos1.x, 2) + pow(pos2.y - pos1.y, 2) + pow(pos2.z - pos1.z, 2));
 
 	float scale;
 	scale = length / 2;
