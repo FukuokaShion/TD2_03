@@ -10,25 +10,17 @@ Map::~Map() {
 }
 
 void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
-	//レーザー
-	rLaser = new Laser();
-	rLaser->Initialize(viewProjection, matProjection, Colour::RED, { -8,0,0 });
-	gLaser = new Laser();
-	gLaser->Initialize(viewProjection, matProjection, Colour::GREEN,{ 0,0,0 });
-	bLaser = new Laser();
-	bLaser->Initialize(viewProjection, matProjection, Colour::BLUE, { 8,0,0 });
-
 //------------デバッグ用壁----------------
 	wallObject = new GameObject3D();
-	wallObject->PreLoadModel("Resources/colosseum/colosseum_Ver2.obj");
-	wallObject->PreLoadTexture(L"Resources/colosseum/wall.png");
+	wallObject->PreLoadModel("Resources/box/box.obj");
+	wallObject->PreLoadTexture(L"Resources/box/box.png");
 	wallObject->SetViewProjection(viewProjection);
 	wallObject->SetMatProjection(matProjection);
 	wallObject->Initialize();
 	wallObject->worldTransform.translation.y = -1;
-	wallObject->worldTransform.scale.x = 5;
-	wallObject->worldTransform.scale.y = 5;
-	wallObject->worldTransform.scale.z = 5;
+	wallObject->worldTransform.scale.x = 40;
+	wallObject->worldTransform.scale.y = 20;
+	wallObject->worldTransform.scale.z = 40;
 	wallObject->worldTransform.UpdateMatWorld();
 
 	frontPlane.normal = { 0, 0, -1 };
@@ -62,28 +54,43 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	downPlane.size = { 40,0,40 };
 
 //----------------------------
+	//レーザー
+	rLaser = new Laser();
+	rLaser->Initialize(viewProjection, matProjection, Colour::RED, { 0,0,8 });
+	gLaser = new Laser();
+	gLaser->Initialize(viewProjection, matProjection, Colour::GREEN, { 16,0,0 });
+	bLaser = new Laser();
+	bLaser->Initialize(viewProjection, matProjection, Colour::BLUE, { -20,0,0 });
+
 
 	//ブロック
 	block = new Block();
 	WorldTransform blockworld;
 	blockworld.initialize();
-	blockworld.translation = { -5,0,15 };
-	blockworld.scale = { 1,1,1 };
+	blockworld.translation = { 7,0,0 };
+	blockworld.scale = { 1,6,13 };
 	block->Initialize(viewProjection, matProjection, blockworld);
+
+	block2 = new Block();
+	WorldTransform blockworld2;
+	blockworld2.initialize();
+	blockworld2.translation = { 7,0,0 };
+	blockworld2.scale = { 0.5f,0.5f,0.5f };
+	block2->Initialize(viewProjection, matProjection, blockworld2);
 
 	//鏡
 	mirror = new Mirror();
 	WorldTransform mirrorworld;
 	mirrorworld.initialize();
-	mirrorworld.translation = { 5,0,15 };
-	mirrorworld.scale = { 1,1,1 };
+	mirrorworld.translation = { 8,4,40 };
+	mirrorworld.scale = { 3,3,0.1f };
 	mirror->Initialize(viewProjection, matProjection, mirrorworld);
 
 	//クリスタル
 	crystal = new Crystal();
 	WorldTransform crystalworld;
 	crystalworld.initialize();
-	crystalworld.translation = { 0,4,18 };
+	crystalworld.translation = { 0,8,20 };
 	crystalworld.scale = { 1,1,1 };
 	crystal->Initialize(viewProjection, matProjection, crystalworld);
 }
@@ -171,6 +178,9 @@ void Map::Update() {
 			if (ray[i + 1].isReflection == false) {
 				break;
 			}
+
+
+			block2->obj->worldTransform.translation = ray[1].start;
 		}
 		//レーザー更新
 		rLaser->Affine();
@@ -269,12 +279,14 @@ void Map::Update() {
 		bLaser->Affine();
 	}
 
+
 	//更新
 	rLaser->Update();
 	gLaser->Update();
 	bLaser->Update();
 
 	block->Update();
+	block2->Update();
 	mirror->Update();
 	crystal->Update();
 }
@@ -285,6 +297,7 @@ void Map::Draw() {
 	bLaser->Draw();
 	wallObject->Draw();
 	block->Draw();
+	//block2->Draw();
 	mirror->Draw();
 	crystal->Draw();
 }

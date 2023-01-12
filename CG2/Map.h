@@ -64,12 +64,6 @@ private:
 	bool isHitBLaser = false;
 
 //--------------------
-	//オブジェクト
-	Block* block;
-	Mirror* mirror;
-	Crystal* crystal;
-
-
 	//デバッグ用フィールド
 	GameObject3D* wallObject = nullptr;
 	Plane frontPlane;
@@ -78,4 +72,14 @@ private:
 	Plane rightPlane;
 	Plane upPlane;
 	Plane downPlane;
+
+
+	//オブジェクト
+	Crystal* crystal;
+
+	Block* block;
+	Block* block2;
+
+	Mirror* mirror;
+
 };

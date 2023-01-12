@@ -230,26 +230,31 @@ Vector3 BulletRota(Vector3 pos1, Vector3 pos2) {
 
 	//アークタンジェントで角度の計算
 	//向く面は同じ
-	if (abs(pos2.z - pos1.z) <= abs(pos2.x - pos1.x) && pos2.x - pos1.x > 0) {
-		rota.z = atan2(pos2.y - pos1.y, pos2.x - pos1.x);
-		rota.y = -atan2(pos2.z - pos1.z, pos2.x - pos1.x);
-		rota.x = 0;
-	}
-	else if (abs(pos2.z - pos1.z) <= abs(pos2.x - pos1.x) && pos2.x - pos1.x < 0) {
-		rota.z = -atan2(pos2.y - pos1.y, pos2.x - pos1.x) + PI;
-		rota.y = -atan2(pos2.z - pos1.z, pos2.x - pos1.x);
-		rota.x = 0;
-	}
-	else if (abs(pos2.z - pos1.z) > abs(pos2.x - pos1.x) && pos2.z - pos1.z > 0) {
-		rota.z = atan2(pos2.y - pos1.y, pos2.z - pos1.z);
-		rota.y = -atan2(pos2.z - pos1.z, pos2.x - pos1.x);
-		rota.x = 0;
-	}
-	else if (abs(pos2.z - pos1.z) > abs(pos2.x - pos1.x) && pos2.z - pos1.z < 0) {
-		rota.z = -atan2(pos2.y - pos1.y, pos2.z - pos1.z) + PI;
-		rota.y = -atan2(pos2.z - pos1.z, pos2.x - pos1.x);
-		rota.x = 0;
-	}
+	//if (abs(pos2.z - pos1.z) <= abs(pos2.x - pos1.x) && pos2.x - pos1.x > 0) {
+	//	rota.z = atan2(pos2.y - pos1.y, pos2.x - pos1.x);
+	//	rota.y = -atan2(pos2.z - pos1.z, pos2.x - pos1.x);
+	//	rota.x = 0;
+	//}
+	//else if (abs(pos2.z - pos1.z) <= abs(pos2.x - pos1.x) && pos2.x - pos1.x < 0) {
+	//	rota.z = -atan2(pos2.y - pos1.y, pos2.x - pos1.x) + PI;
+	//	rota.y = -atan2(pos2.z - pos1.z, pos2.x - pos1.x);
+	//	rota.x = 0;
+	//}
+	//else if (abs(pos2.z - pos1.z) > abs(pos2.x - pos1.x) && pos2.z - pos1.z > 0) {
+	//	rota.z = atan2(pos2.y - pos1.y, pos2.z - pos1.z);
+	//	rota.y = -atan2(pos2.z - pos1.z, pos2.x - pos1.x);
+	//	rota.x = 0;
+	//}
+	//else if (abs(pos2.z - pos1.z) > abs(pos2.x - pos1.x) && pos2.z - pos1.z < 0) {
+	//	rota.z = -atan2(pos2.y - pos1.y, pos2.z - pos1.z) + PI;
+	//	rota.y = -atan2(pos2.z - pos1.z, pos2.x - pos1.x);
+	//	rota.x = 0;
+	//}
+
+	rota.y = atan2(pos2.x - pos1.x, pos2.z - pos1.z) - (PI / 2);
+	rota.z = atan2(pos2.y - pos1.y, sqrt(pow(pos2.x - pos1.x, 2) + pow(pos2.z - pos1.z, 2)));
+	rota.x = 0;
+
 
 
 	return rota;
