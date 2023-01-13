@@ -74,8 +74,8 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	block2 = new Block();
 	WorldTransform blockworld2;
 	blockworld2.initialize();
-	blockworld2.translation = { 7,0,0 };
-	blockworld2.scale = { 0.5f,0.5f,0.5f };
+	blockworld2.translation = { -16,0,3 };
+	blockworld2.scale = { 1,4,7 };
 	block2->Initialize(viewProjection, matProjection, blockworld2);
 
 	//鏡
@@ -85,6 +85,28 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	mirrorworld.translation = { 8,4,40 };
 	mirrorworld.scale = { 3,3,0.1f };
 	mirror->Initialize(viewProjection, matProjection, mirrorworld);
+
+
+	mirror2 = new Mirror();
+	WorldTransform mirrorworld2;
+	mirrorworld2.initialize();
+	mirrorworld2.translation = { -40,5,20 };
+	mirrorworld2.scale = { 0.1f,3,3 };
+	mirror2->Initialize(viewProjection, matProjection, mirrorworld2);
+
+	mirror3 = new Mirror();
+	WorldTransform mirrorworld3;
+	mirrorworld3.initialize();
+	mirrorworld3.translation = { -20,5,40 };
+	mirrorworld3.scale = { 3,3,0.1f };
+	mirror3->Initialize(viewProjection, matProjection, mirrorworld3);
+
+	mirror4 = new Mirror();
+	WorldTransform mirrorworld4;
+	mirrorworld4.initialize();
+	mirrorworld4.translation = { 80,40,40 };
+	mirrorworld4.scale = { 3,3,0.1f };
+	mirror4->Initialize(viewProjection, matProjection, mirrorworld4);
 
 	//クリスタル
 	crystal = new Crystal();
@@ -167,6 +189,9 @@ void Map::Update() {
 
 			//レイと鏡の当たり判定
 			mirror->CheckCollision(ray, i, &dis);
+			mirror2->CheckCollision(ray, i, &dis);
+			mirror3->CheckCollision(ray, i, &dis);
+			mirror4->CheckCollision(ray, i, &dis);
 
 			//レイとクリスタルの当たり判定
 			isHitRLaser = crystal->CheckCollision(ray, i, &dis);
@@ -178,9 +203,6 @@ void Map::Update() {
 			if (ray[i + 1].isReflection == false) {
 				break;
 			}
-
-
-			block2->obj->worldTransform.translation = ray[1].start;
 		}
 		//レーザー更新
 		rLaser->Affine();
@@ -220,6 +242,9 @@ void Map::Update() {
 
 			block->CheckCollision(ray, i, &dis);
 			mirror->CheckCollision(ray, i, &dis);
+			mirror2->CheckCollision(ray, i, &dis);
+			mirror3->CheckCollision(ray, i, &dis);
+			mirror4->CheckCollision(ray, i, &dis);
 
 			isHitGLaser = crystal->CheckCollision(ray, i, &dis);
 
@@ -266,6 +291,9 @@ void Map::Update() {
 
 			block->CheckCollision(ray, i, &dis);
 			mirror->CheckCollision(ray, i, &dis);
+			mirror2->CheckCollision(ray, i, &dis);
+			mirror3->CheckCollision(ray, i, &dis);
+			mirror4->CheckCollision(ray, i, &dis);
 
 			isHitBLaser = crystal->CheckCollision(ray, i, &dis);
 
@@ -288,6 +316,9 @@ void Map::Update() {
 	block->Update();
 	block2->Update();
 	mirror->Update();
+	mirror2->Update();
+	mirror3->Update();
+	mirror4->Update();
 	crystal->Update();
 }
 
@@ -297,8 +328,11 @@ void Map::Draw() {
 	bLaser->Draw();
 	wallObject->Draw();
 	block->Draw();
-	//block2->Draw();
+	block2->Draw();
 	mirror->Draw();
+	mirror2->Draw();
+	mirror3->Draw();
+	mirror4->Draw();
 	crystal->Draw();
 }
 

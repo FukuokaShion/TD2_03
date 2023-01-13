@@ -81,5 +81,9 @@ private:
 	Block* block2;
 
 	Mirror* mirror;
+	
+	Mirror* mirror2;
+	Mirror* mirror3;
+	Mirror* mirror4;
 
 };
