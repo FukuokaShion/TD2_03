@@ -46,7 +46,6 @@ void GameScene::Initialize(WinApp* winApp) {
 	clear_ = Sprite::Create(2, { 0 , 0 });
 	gameOver_ = Sprite::Create(3, { 0 , 0 });
 
-
 }
 
 void GameScene::Update() {
@@ -82,10 +81,11 @@ void GameScene::Update() {
 			viewProjection_ = map->GetView();
 		}else {
 			//プレイヤー
-			player_->Update();
-			player_->Rotate();
 			player_->Move();
+
+			player_->Rotate();
 			viewProjection_ = player_->GetView();
+			player_->Update();
 		}
 
 		//全てのレーザーがクリスタルに当たっているなら
