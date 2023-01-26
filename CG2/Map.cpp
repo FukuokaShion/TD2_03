@@ -10,6 +10,9 @@ Map::~Map() {
 }
 
 void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
+	viewProjection_ = viewProjection;
+	matProjection_ = matProjection;
+
 //------------デバッグ用壁----------------
 	wallObject = new GameObject3D();
 	wallObject->PreLoadModel("Resources/box/box.obj");
@@ -62,52 +65,6 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	bLaser = new Laser();
 	bLaser->Initialize(viewProjection, matProjection, Colour::BLUE, { -20,0,0 });
 
-
-	//ブロック
-	block = new Block();
-	WorldTransform blockworld;
-	blockworld.initialize();
-	blockworld.translation = { 7,0,0 };
-	blockworld.scale = { 1,6,13 };
-	block->Initialize(viewProjection, matProjection, blockworld);
-
-	block2 = new Block();
-	WorldTransform blockworld2;
-	blockworld2.initialize();
-	blockworld2.translation = { -16,0,3 };
-	blockworld2.scale = { 1,4,7 };
-	block2->Initialize(viewProjection, matProjection, blockworld2);
-
-	//鏡
-	mirror = new Mirror();
-	WorldTransform mirrorworld;
-	mirrorworld.initialize();
-	mirrorworld.translation = { 8,4,40 };
-	mirrorworld.scale = { 3,3,0.1f };
-	mirror->Initialize(viewProjection, matProjection, mirrorworld);
-
-
-	mirror2 = new Mirror();
-	WorldTransform mirrorworld2;
-	mirrorworld2.initialize();
-	mirrorworld2.translation = { -40,5,20 };
-	mirrorworld2.scale = { 0.1f,3,3 };
-	mirror2->Initialize(viewProjection, matProjection, mirrorworld2);
-
-	mirror3 = new Mirror();
-	WorldTransform mirrorworld3;
-	mirrorworld3.initialize();
-	mirrorworld3.translation = { -20,5,40 };
-	mirrorworld3.scale = { 3,3,0.1f };
-	mirror3->Initialize(viewProjection, matProjection, mirrorworld3);
-
-	mirror4 = new Mirror();
-	WorldTransform mirrorworld4;
-	mirrorworld4.initialize();
-	mirrorworld4.translation = { 80,40,40 };
-	mirrorworld4.scale = { 3,3,0.1f };
-	mirror4->Initialize(viewProjection, matProjection, mirrorworld4);
-
 	//クリスタル
 	crystal = new Crystal();
 	WorldTransform crystalworld;
@@ -119,12 +76,92 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 
 
 void Map::Reset(int stage) {
+	blocks_.clear();
+	mirrors_.clear();
+
 	rLaser->Reset();
 	gLaser->Reset();
 	bLaser->Reset();
 	isHitRLaser = false;
 	isHitGLaser = false;
 	isHitBLaser = false;
+	if (stage == 0) {
+		//ブロック
+		WorldTransform blockworld;
+		{
+			std::unique_ptr<Block> newBlock = std::make_unique<Block>();
+			blockworld.initialize();
+			blockworld.translation = { -15,2,15 };
+			blockworld.scale = { 2,4,2 };
+			newBlock->Initialize(viewProjection_, matProjection_, blockworld);
+			blocks_.push_back(std::move(newBlock));
+		}
+		//鏡
+		WorldTransform mirrorworld;
+		{
+			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
+			mirrorworld.initialize();
+			mirrorworld.translation = { 0,4,40 };
+			mirrorworld.scale = { 3,3,0.1f };
+			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
+			mirrors_.push_back(std::move(newMirror));
+		}
+	}else if (stage == 1) {
+		//ブロック
+		WorldTransform blockworld;
+		{
+			std::unique_ptr<Block> newBlock = std::make_unique<Block>();
+			blockworld.initialize();
+			blockworld.translation = { 7,0,0 };
+			blockworld.scale = { 1,6,13 };
+			newBlock->Initialize(viewProjection_, matProjection_, blockworld);
+			blocks_.push_back(std::move(newBlock));
+		} {
+			std::unique_ptr<Block> newBlock = std::make_unique<Block>();
+			blockworld.initialize();
+			blockworld.translation = { -16,0,3 };
+			blockworld.scale = { 1,4,7 };
+			newBlock->Initialize(viewProjection_, matProjection_, blockworld);
+			blocks_.push_back(std::move(newBlock));
+		}
+
+
+		//鏡
+		WorldTransform mirrorworld;
+		{
+			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
+			mirrorworld.initialize();
+			mirrorworld.translation = { 8,4,40 };
+			mirrorworld.scale = { 3,3,0.1f };
+			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
+			mirrors_.push_back(std::move(newMirror));
+		}
+		{
+			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
+			mirrorworld.initialize();
+			mirrorworld.translation = { -40,5,20 };
+			mirrorworld.scale = { 0.1f,3,3 };
+			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
+			mirrors_.push_back(std::move(newMirror));
+		}
+		{
+			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
+			mirrorworld.initialize();
+			mirrorworld.translation = { -20,5,40 };
+			mirrorworld.scale = { 3,3,0.1f };
+			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
+			mirrors_.push_back(std::move(newMirror));
+		}
+		{
+			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
+			mirrorworld.initialize();
+			mirrorworld.translation = { 80,40,40 };
+			mirrorworld.scale = { 3,3,0.1f };
+			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
+			mirrors_.push_back(std::move(newMirror));
+		}
+	}
+
 }
 
 void Map::Update() {
@@ -185,14 +222,14 @@ void Map::Update() {
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, &dis);
 
 			//レイとブロックの当たり判定
-			block->CheckCollision(ray, i, &dis);
+			for (std::unique_ptr<Block>& block : blocks_) {
+				block->CheckCollision(ray, i, &dis);
+			}
 
 			//レイと鏡の当たり判定
-			mirror->CheckCollision(ray, i, &dis);
-			mirror2->CheckCollision(ray, i, &dis);
-			mirror3->CheckCollision(ray, i, &dis);
-			mirror4->CheckCollision(ray, i, &dis);
-
+			for (std::unique_ptr<Mirror>& mirror : mirrors_) {
+				mirror->CheckCollision(ray, i, &dis);
+			}
 			//レイとクリスタルの当たり判定
 			isHitRLaser = crystal->CheckCollision(ray, i, &dis);
 
@@ -240,11 +277,13 @@ void Map::Update() {
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], upPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, &dis);
 
-			block->CheckCollision(ray, i, &dis);
-			mirror->CheckCollision(ray, i, &dis);
-			mirror2->CheckCollision(ray, i, &dis);
-			mirror3->CheckCollision(ray, i, &dis);
-			mirror4->CheckCollision(ray, i, &dis);
+			//レイとブロックの当たり判定
+			for (std::unique_ptr<Block>& block : blocks_) {
+				block->CheckCollision(ray, i, &dis);
+			}
+			for (std::unique_ptr<Mirror>& mirror : mirrors_) {
+				mirror->CheckCollision(ray, i, &dis);
+			}
 
 			isHitGLaser = crystal->CheckCollision(ray, i, &dis);
 
@@ -289,11 +328,13 @@ void Map::Update() {
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], upPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, &dis);
 
-			block->CheckCollision(ray, i, &dis);
-			mirror->CheckCollision(ray, i, &dis);
-			mirror2->CheckCollision(ray, i, &dis);
-			mirror3->CheckCollision(ray, i, &dis);
-			mirror4->CheckCollision(ray, i, &dis);
+			//レイとブロックの当たり判定
+			for (std::unique_ptr<Block>& block : blocks_) {
+				block->CheckCollision(ray, i, &dis);
+			}
+			for (std::unique_ptr<Mirror>& mirror : mirrors_) {
+				mirror->CheckCollision(ray, i, &dis);
+			}
 
 			isHitBLaser = crystal->CheckCollision(ray, i, &dis);
 
@@ -313,12 +354,13 @@ void Map::Update() {
 	gLaser->Update();
 	bLaser->Update();
 
-	block->Update();
-	block2->Update();
-	mirror->Update();
-	mirror2->Update();
-	mirror3->Update();
-	mirror4->Update();
+	//レイとブロックの当たり判定
+	for (std::unique_ptr<Block>& block : blocks_) {
+		block->Update();
+	}
+	for (std::unique_ptr<Mirror>& mirror : mirrors_) {
+		mirror->Update();
+	}
 	crystal->Update();
 }
 
@@ -327,12 +369,12 @@ void Map::Draw() {
 	gLaser->Draw();
 	bLaser->Draw();
 	wallObject->Draw();
-	block->Draw();
-	block2->Draw();
-	mirror->Draw();
-	mirror2->Draw();
-	mirror3->Draw();
-	mirror4->Draw();
+	for (std::unique_ptr<Block>& block : blocks_) {
+		block->Draw();
+	}
+	for (std::unique_ptr<Mirror>& mirror : mirrors_) {
+		mirror->Draw();
+	}
 	crystal->Draw();
 }
 
@@ -363,4 +405,21 @@ ViewProjection Map::GetView() {
 		viewProjection = bLaser->GetView();
 	}
 	return viewProjection;
+}
+
+
+bool Map::CheckCollisionPlayer2map(WorldTransform playerPos) {
+
+	for (std::unique_ptr<Block>& block : blocks_) {
+		if (playerPos.translation.x - 1 < block->obj->worldTransform.translation.x + block->obj->worldTransform.scale.x && playerPos.translation.x + 1 > block->obj->worldTransform.translation.x - block->obj->worldTransform.scale.x) {
+			if (playerPos.translation.z - 1 < block->obj->worldTransform.translation.z + block->obj->worldTransform.scale.z && playerPos.translation.z + 1 > block->obj->worldTransform.translation.z - block->obj->worldTransform.scale.z) {
+				if (playerPos.translation.y - 1 < block->obj->worldTransform.translation.y + block->obj->worldTransform.scale.y && playerPos.translation.y + 1 > block->obj->worldTransform.translation.y - block->obj->worldTransform.scale.y) {
+					return true;
+				}
+			}
+		}
+	}
+
+
+	return false;
 }

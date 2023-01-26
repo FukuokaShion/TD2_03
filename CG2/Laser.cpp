@@ -19,7 +19,7 @@ Laser::~Laser() {
 void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, int colour,Vector3 pos) {
 	GetCursorPos(&mousePos);
 	viewProjection_.Initialize();
-	viewProjection_.eye = Vector3{ 0,1.5f,0 };
+	viewProjection_.eye = Vector3{ 0,1.5f,-5 };
 	viewTargetMat.SetIdentityMatrix();
 
 	//‘•’uƒ‚ƒfƒ‹‰Šúİ’è

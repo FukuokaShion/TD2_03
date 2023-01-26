@@ -34,6 +34,7 @@ void GameScene::Initialize(WinApp* winApp) {
 	map->Initialize(&viewProjection_, &matProjection_);
 
 	map->SetPlayer(player_);
+	player_->SetMap(map);
 //----------------
 	//スプライト読み込み
 	Sprite::LoadTexture(1, L"Resources/title.png");
@@ -54,13 +55,19 @@ void GameScene::Update() {
 	switch (scene)
 	{
 	case Scene::Title:
-		GameScene::Reset();
 
-		if (input_.TriggerKey(DIK_SPACE)) {
+		if (input_.TriggerKey(DIK_0)) {
 			//カーソルの非表示
 			ShowCursor(FALSE);
+			player_->Reset();
 			map->Reset(0);
 			scene = Scene::Play; 
+		}else if (input_.TriggerKey(DIK_1)) {
+			//カーソルの非表示
+			ShowCursor(FALSE);
+			player_->Reset();
+			map->Reset(1);
+			scene = Scene::Play;
 		}
 		
 		break;
@@ -149,11 +156,6 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 }
 
-void GameScene::Reset() {
-	player_->Reset();
-	map->Reset(0);
-
-}
 
 //void GameScene::CheckAllCollisions() {
 //	//敵と自弾
