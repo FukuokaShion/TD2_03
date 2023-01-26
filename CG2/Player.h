@@ -4,6 +4,8 @@
 #include "MathFunc.h"
 #include "ViewProjection.h"
 
+class Map;
+
 class Player {
 public:
 	//コンストラクタ
@@ -35,6 +37,9 @@ public:
 	void bulletEnemyOncollision();
 	void bulletBulletOnCollision();
 
+
+	void SetMap(Map* map) { map_ = map; };
+
 	//ゲッター
 	Vector3 GetAngle() { return angle; }
 	float GetR() { return r; }
@@ -45,6 +50,7 @@ public:
 private:
 	//メンバ変数
 private:
+	Map* map_;
 	//キー入力
 	Input& input = Input::GetInstance();
 	POINT mousePos;

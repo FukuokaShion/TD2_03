@@ -1,4 +1,6 @@
 #pragma once
+#include<memory>
+#include<list>
 #include"Laser.h"
 #include"Player.h"
 
@@ -21,6 +23,8 @@ public:
 	void Draw();
 
 	void SetPlayer(Player* player) { player_ = player; };
+
+	bool CheckCollisionPlayer2map(WorldTransform playerPos);
 
 	//レーザーを操作しているか
 	bool GetIsControlLaser();
@@ -74,16 +78,14 @@ private:
 	Plane downPlane;
 
 
+	XMMATRIX* matProjection_;
+	//ビュープロジェクション
+	ViewProjection* viewProjection_;
+
 	//オブジェクト
 	Crystal* crystal;
 
-	Block* block;
-	Block* block2;
-
-	Mirror* mirror;
-	
-	Mirror* mirror2;
-	Mirror* mirror3;
-	Mirror* mirror4;
+	std::list<std::unique_ptr<Block>> blocks_;
+	std::list<std::unique_ptr<Mirror>> mirrors_;
 
 };
