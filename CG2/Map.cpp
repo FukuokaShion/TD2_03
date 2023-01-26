@@ -408,8 +408,8 @@ ViewProjection Map::GetView() {
 }
 
 
-bool Map::CheckCollisionPlayer2map(WorldTransform playerPos) {
-
+bool Map::CheckCollisionPlayer2map(WorldTransform playerPos,Vector3 velocity) {
+	
 	for (std::unique_ptr<Block>& block : blocks_) {
 		if (playerPos.translation.x - 1 < block->obj->worldTransform.translation.x + block->obj->worldTransform.scale.x && playerPos.translation.x + 1 > block->obj->worldTransform.translation.x - block->obj->worldTransform.scale.x) {
 			if (playerPos.translation.z - 1 < block->obj->worldTransform.translation.z + block->obj->worldTransform.scale.z && playerPos.translation.z + 1 > block->obj->worldTransform.translation.z - block->obj->worldTransform.scale.z) {

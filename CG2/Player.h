@@ -62,7 +62,7 @@ private:
 
 
 	//マウス感度
-	Vector2 sensitivity = { 450,450};
+	Vector2 sensitivity = { 650,650};
 
 	//本体
 	GameObject3D* player_ = nullptr;

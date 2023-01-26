@@ -40,7 +40,6 @@ void Player::Reset() {
 void Player::Update() {
 
 	Attack();
-	
 	viewTargetMat.m[3][0] = viewTarget.x;
 	viewTargetMat.m[3][1] = viewTarget.y;
 	viewTargetMat.m[3][2] = viewTarget.z;
@@ -127,7 +126,7 @@ void Player::Move() {
 
 	WorldTransform preMovePos = player_->worldTransform;
 	preMovePos.translation += velocity;
-	if (map_->CheckCollisionPlayer2map(preMovePos) == false) {
+	if (map_->CheckCollisionPlayer2map(preMovePos, velocity) == false) {
 		//ˆÚ“®
 		player_->worldTransform.translation += velocity;
 	}
