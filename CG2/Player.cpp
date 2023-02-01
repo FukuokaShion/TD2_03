@@ -124,12 +124,7 @@ void Player::Move() {
 	//速度ベクトルを自機の向きに合わせて回転させる
 	velocity = bVelocity(velocity, player_->worldTransform);
 
-	WorldTransform preMovePos = player_->worldTransform;
-	preMovePos.translation += velocity;
-	if (map_->CheckCollisionPlayer2map(preMovePos, velocity) == false) {
-		//移動
-		player_->worldTransform.translation += velocity;
-	}
+	map_->CheckCollisionPlayer2map(&player_->worldTransform, velocity);
 }
 
 void Player::Attack() {

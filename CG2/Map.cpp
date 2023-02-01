@@ -162,7 +162,6 @@ void Map::Reset(int stage) {
 void Map::Update() {
 	//デバッグ用壁
 	wallObject->Update();
-	
 	//プレイヤーの情報取得
 	//プレイヤー座標
 	WorldTransform playerWoorldTransform = player_->GetWorldTransform();
@@ -404,18 +403,41 @@ ViewProjection Map::GetView() {
 }
 
 
-bool Map::CheckCollisionPlayer2map(WorldTransform playerPos,Vector3 velocity) {
-	
+void Map::CheckCollisionPlayer2map(WorldTransform* playerPos, Vector3 velocity) {
+	WorldTransform* playerPos_;
+	playerPos_ = playerPos;
+	playerPos_->translation += velocity;
+
 	for (std::unique_ptr<Block>& block : blocks_) {
-		if (playerPos.translation.x - 1 < block->obj->worldTransform.translation.x + block->obj->worldTransform.scale.x && playerPos.translation.x + 1 > block->obj->worldTransform.translation.x - block->obj->worldTransform.scale.x) {
-			if (playerPos.translation.z - 1 < block->obj->worldTransform.translation.z + block->obj->worldTransform.scale.z && playerPos.translation.z + 1 > block->obj->worldTransform.translation.z - block->obj->worldTransform.scale.z) {
-				if (playerPos.translation.y - 1 < block->obj->worldTransform.translation.y + block->obj->worldTransform.scale.y && playerPos.translation.y + 1 > block->obj->worldTransform.translation.y - block->obj->worldTransform.scale.y) {
-					return true;
+		if (playerPos_->translation.x - 1 < block->obj->worldTransform.translation.x + block->obj->worldTransform.scale.x && playerPos_->translation.x + 1 > block->obj->worldTransform.translation.x - block->obj->worldTransform.scale.x) {
+			if (playerPos_->translation.y - 1 < block->obj->worldTransform.translation.y + block->obj->worldTransform.scale.y && playerPos_->translation.y + 1 > block->obj->worldTransform.translation.y - block->obj->worldTransform.scale.y) {
+				if (playerPos_->translation.z - 1 < block->obj->worldTransform.translation.z + block->obj->worldTransform.scale.z && playerPos_->translation.z + 1 > block->obj->worldTransform.translation.z - block->obj->worldTransform.scale.z) {
+					
+					Vector3 blockVec;
+					blockVec = { block->obj->worldTransform.scale.x,0,block->obj->worldTransform.scale.z };
+					blockVec.nomalize();
+
+					Vector3 block2player;
+					block2player.x = playerPos_->translation.x - block->obj->worldTransform.translation.x;
+					block2player.y = 0;
+					block2player.z = playerPos_->translation.z - block->obj->worldTransform.translation.z;
+					block2player.nomalize();
+
+					if (blockVec.x < block2player.x) {
+						playerPos_->translation.x = block->obj->worldTransform.translation.x + block->obj->worldTransform.scale.x + 1;
+					}else if (-blockVec.x > block2player.x) {
+						playerPos_->translation.x = block->obj->worldTransform.translation.x - block->obj->worldTransform.scale.x - 1;
+					}
+
+					if (blockVec.z < block2player.z) {
+						playerPos_->translation.z = block->obj->worldTransform.translation.z + block->obj->worldTransform.scale.z + 1;
+					}else if (-blockVec.z > block2player.z) {
+						playerPos_->translation.z = block->obj->worldTransform.translation.z - block->obj->worldTransform.scale.z - 1;
+					}
 				}
 			}
 		}
 	}
+	playerPos = playerPos_;
 
-
-	return false;
 }
