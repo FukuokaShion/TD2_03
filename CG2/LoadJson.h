@@ -20,7 +20,6 @@ public:
 	std::vector<WorldTransform>worldTrans;
 
 private:
-	json j;
 	std::vector<float> trans_x;
 	std::vector<float> trans_y;
 	std::vector<float> trans_z;
