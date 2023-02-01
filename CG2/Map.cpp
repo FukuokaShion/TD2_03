@@ -64,19 +64,36 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 
 
 	//ブロック
-	block = new Block();
-	WorldTransform blockworld;
-	blockworld.initialize();
-	blockworld.translation = { 7,0,0 };
-	blockworld.scale = { 1,6,13 };
-	block->Initialize(viewProjection, matProjection, blockworld);
+	
+	std::vector<WorldTransform> blockworld;
+	//念のため中身をきれいに
+	blockworld.clear();
+	blocks.remove_if([](std::unique_ptr<Block>& block) { return true; });
+	//jsonファイルから値を抽出
+	loadJson.LoadFromJson(1, "Block.json");
+	for (size_t i = 0; i < loadJson.worldTrans.size(); i++)
+	{
+		blockworld.push_back(loadJson.worldTrans[i]);
+	}
+	
+	for (size_t i = 0; i < blockworld.size(); i++)
+	{
+		//ブロックを生成し、初期化
+		std::unique_ptr<Block> newBlock = std::make_unique<Block>();
 
-	block2 = new Block();
+		newBlock->Initialize(viewProjection, matProjection, blockworld[i]);
+
+		//ブロックを登録する
+		blocks.push_back(std::move(newBlock));
+	}
+	//block->Initialize(viewProjection, matProjection, blockworld);
+	
+	/*block2 = new Block();
 	WorldTransform blockworld2;
 	blockworld2.initialize();
 	blockworld2.translation = { 7,0,0 };
 	blockworld2.scale = { 0.5f,0.5f,0.5f };
-	block2->Initialize(viewProjection, matProjection, blockworld2);
+	block2->Initialize(viewProjection, matProjection, blockworld2);*/
 
 	//鏡
 	mirror = new Mirror();
@@ -163,8 +180,9 @@ void Map::Update() {
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, &dis);
 
 			//レイとブロックの当たり判定
-			block->CheckCollision(ray, i, &dis);
-
+			for (std::unique_ptr<Block>& block : blocks) {
+				block->CheckCollision(ray, i, &dis);
+			}
 			//レイと鏡の当たり判定
 			mirror->CheckCollision(ray, i, &dis);
 
@@ -180,7 +198,7 @@ void Map::Update() {
 			}
 
 
-			block2->obj->worldTransform.translation = ray[1].start;
+			//block2->obj->worldTransform.translation = ray[1].start;
 		}
 		//レーザー更新
 		rLaser->Affine();
@@ -217,8 +235,9 @@ void Map::Update() {
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], rightPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], upPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, &dis);
-
-			block->CheckCollision(ray, i, &dis);
+			for (std::unique_ptr<Block>& block : blocks) {
+				block->CheckCollision(ray, i, &dis);
+			}
 			mirror->CheckCollision(ray, i, &dis);
 
 			isHitGLaser = crystal->CheckCollision(ray, i, &dis);
@@ -263,8 +282,9 @@ void Map::Update() {
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], rightPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], upPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, &dis);
-
-			block->CheckCollision(ray, i, &dis);
+			for (std::unique_ptr<Block>& block : blocks) {
+				block->CheckCollision(ray, i, &dis);
+			}
 			mirror->CheckCollision(ray, i, &dis);
 
 			isHitBLaser = crystal->CheckCollision(ray, i, &dis);
@@ -284,9 +304,10 @@ void Map::Update() {
 	rLaser->Update();
 	gLaser->Update();
 	bLaser->Update();
-
-	block->Update();
-	block2->Update();
+	for (std::unique_ptr<Block>& block : blocks) {
+		block->Update();
+	}
+	//block2->Update();
 	mirror->Update();
 	crystal->Update();
 }
@@ -296,7 +317,9 @@ void Map::Draw() {
 	gLaser->Draw();
 	bLaser->Draw();
 	wallObject->Draw();
-	block->Draw();
+	for (std::unique_ptr<Block>& block : blocks) {
+		block->Draw();
+	}
 	//block2->Draw();
 	mirror->Draw();
 	crystal->Draw();

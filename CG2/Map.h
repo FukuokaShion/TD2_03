@@ -1,9 +1,14 @@
 #pragma once
+#include<vector>
+#include<list>
+#include<memory>
+
 #include"Laser.h"
 #include"Player.h"
 
 #include"Block.h"
 #include"Crystal.h"
+#include"LoadJson.h"
 
 class Player;
 
@@ -14,7 +19,7 @@ public:
 
 	void Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection);
 
-	void Reset(int stage);
+	void Reset(int  stage);
 
 	void Update();
 
@@ -77,9 +82,12 @@ private:
 	//オブジェクト
 	Crystal* crystal;
 
-	Block* block;
+	std::list<std::unique_ptr<Block>>blocks;
 	Block* block2;
 
 	Mirror* mirror;
+
+	//json読み込み
+	LoadJson loadJson;
 
 };

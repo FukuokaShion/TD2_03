@@ -93,6 +93,7 @@
     <ClCompile Include="Block.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="LoadJson.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPS.h">
@@ -182,6 +183,7 @@
     <ClInclude Include="Block.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="LoadJson.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Basic.hlsli">
