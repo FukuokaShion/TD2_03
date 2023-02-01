@@ -1740,7 +1740,7 @@ void D3DX_BC6H::Decode(bool bSigned, HDRColorA* pOut) const noexcept
             if (uStartBit + uNumBits > 128)
             {
             #ifdef _DEBUG
-                OutputDebugStringA("BC6H: Invalid block encountered during decoding\n");
+                OutputDebugStringA("BC6H: Invalid blocks encountered during decoding\n");
             #endif
                 FillWithErrorColors(pOut);
                 return;
@@ -2559,7 +2559,7 @@ void D3DX_BC7::Decode(HDRColorA* pOut) const noexcept
             if (uStartBit + RGBAPrec.r > 128)
             {
             #ifdef _DEBUG
-                OutputDebugStringA("BC7: Invalid block encountered during decoding\n");
+                OutputDebugStringA("BC7: Invalid blocks encountered during decoding\n");
             #endif
                 FillWithErrorColors(pOut);
                 return;
@@ -2574,7 +2574,7 @@ void D3DX_BC7::Decode(HDRColorA* pOut) const noexcept
             if (uStartBit + RGBAPrec.g > 128)
             {
             #ifdef _DEBUG
-                OutputDebugStringA("BC7: Invalid block encountered during decoding\n");
+                OutputDebugStringA("BC7: Invalid blocks encountered during decoding\n");
             #endif
                 FillWithErrorColors(pOut);
                 return;
@@ -2589,7 +2589,7 @@ void D3DX_BC7::Decode(HDRColorA* pOut) const noexcept
             if (uStartBit + RGBAPrec.b > 128)
             {
             #ifdef _DEBUG
-                OutputDebugStringA("BC7: Invalid block encountered during decoding\n");
+                OutputDebugStringA("BC7: Invalid blocks encountered during decoding\n");
             #endif
                 FillWithErrorColors(pOut);
                 return;
@@ -2604,7 +2604,7 @@ void D3DX_BC7::Decode(HDRColorA* pOut) const noexcept
             if (uStartBit + RGBAPrec.a > 128)
             {
             #ifdef _DEBUG
-                OutputDebugStringA("BC7: Invalid block encountered during decoding\n");
+                OutputDebugStringA("BC7: Invalid blocks encountered during decoding\n");
             #endif
                 FillWithErrorColors(pOut);
                 return;
@@ -2621,7 +2621,7 @@ void D3DX_BC7::Decode(HDRColorA* pOut) const noexcept
             if (uStartBit > 127)
             {
             #ifdef _DEBUG
-                OutputDebugStringA("BC7: Invalid block encountered during decoding\n");
+                OutputDebugStringA("BC7: Invalid blocks encountered during decoding\n");
             #endif
                 FillWithErrorColors(pOut);
                 return;
@@ -2659,7 +2659,7 @@ void D3DX_BC7::Decode(HDRColorA* pOut) const noexcept
             if (uStartBit + uNumBits > 128)
             {
             #ifdef _DEBUG
-                OutputDebugStringA("BC7: Invalid block encountered during decoding\n");
+                OutputDebugStringA("BC7: Invalid blocks encountered during decoding\n");
             #endif
                 FillWithErrorColors(pOut);
                 return;
@@ -2676,7 +2676,7 @@ void D3DX_BC7::Decode(HDRColorA* pOut) const noexcept
                 if (uStartBit + uNumBits > 128)
                 {
                 #ifdef _DEBUG
-                    OutputDebugStringA("BC7: Invalid block encountered during decoding\n");
+                    OutputDebugStringA("BC7: Invalid blocks encountered during decoding\n");
                 #endif
                     FillWithErrorColors(pOut);
                     return;

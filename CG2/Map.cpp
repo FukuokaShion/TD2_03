@@ -13,7 +13,7 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	viewProjection_ = viewProjection;
 	matProjection_ = matProjection;
 
-	//------------ƒfƒoƒbƒO—p•Ç----------------
+//------------ãƒ‡ãƒãƒƒã‚°ç”¨å£----------------
 	wallObject = new GameObject3D();
 	wallObject->PreLoadModel("Resources/box/box.obj");
 	wallObject->PreLoadTexture(L"Resources/box/box.png");
@@ -56,8 +56,8 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	downPlane.pos = { 0,-1,0 };
 	downPlane.size = { 40,0,40 };
 
-	//----------------------------
-		//ƒŒ[ƒU[
+//----------------------------
+	//ãƒ¬ãƒ¼ã‚¶ãƒ¼
 	rLaser = new Laser();
 	rLaser->Initialize(viewProjection, matProjection, Colour::RED, { 0,0,8 });
 	gLaser = new Laser();
@@ -65,7 +65,8 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	bLaser = new Laser();
 	bLaser->Initialize(viewProjection, matProjection, Colour::BLUE, { -20,0,0 });
 
-	//ƒNƒŠƒXƒ^ƒ‹
+
+	//ã‚¯ãƒªã‚¹ã‚¿ãƒ«
 	crystal = new Crystal();
 	WorldTransform crystalworld;
 	crystalworld.initialize();
@@ -85,24 +86,31 @@ void Map::Reset(int stage) {
 	isHitRLaser = false;
 	isHitGLaser = false;
 	isHitBLaser = false;
+	std::vector<WorldTransform> blockworld;
+	//å¿µã®ãŸã‚ä¸­èº«ã‚’ãã‚Œã„ã«
+	blockworld.clear();
+	blocks_.remove_if([](std::unique_ptr<Block>& block) { return true; });
+	//jsonãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰å€¤ã‚’æŠ½å‡º
+	loadJson.LoadFromJson(stage, "Block.json");
+	for (size_t i = 0; i < loadJson.worldTrans.size(); i++)
+	{
+		blockworld.push_back(loadJson.worldTrans[i]);
+	}
+	
+	for (size_t i = 0; i < blockworld.size(); i++)
+	{
+		//ãƒ–ãƒ­ãƒƒã‚¯ã‚’ç”Ÿæˆã—ã€åˆæœŸåŒ–
+		std::unique_ptr<Block> newBlock = std::make_unique<Block>();
 
+		newBlock->Initialize(viewProjection_, matProjection_, blockworld[i]);
+
+		//ãƒ–ãƒ­ãƒƒã‚¯ã‚’ç™»éŒ²ã™ã‚‹
+		blocks_.push_back(std::move(newBlock));
+	}
 	if (stage == 0) {
-		//json“Ç‚İ‚İ
-		WorldTransform blockworld;
-
-
-		{
-			std::unique_ptr<Block> newBlock = std::make_unique<Block>();
-
-			blockworld.initialize();
-			blockworld.translation = { -15,2,15 };
-			blockworld.scale = { 2,4,2 };
-
-			newBlock->Initialize(viewProjection_, matProjection_, blockworld);
-
-			blocks_.push_back(std::move(newBlock));
-		}
-		//‹¾
+  
+	//block->Initialize(viewProjection, matProjection, blockworld);
+		//é¡
 		WorldTransform mirrorworld;
 		{
 			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
@@ -112,28 +120,8 @@ void Map::Reset(int stage) {
 			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
 			mirrors_.push_back(std::move(newMirror));
 		}
-	}
-	else if (stage == 1) {
-		//ƒuƒƒbƒN
-		WorldTransform blockworld;
-		{
-			std::unique_ptr<Block> newBlock = std::make_unique<Block>();
-			blockworld.initialize();
-			blockworld.translation = { 7,0,0 };
-			blockworld.scale = { 1,6,13 };
-			newBlock->Initialize(viewProjection_, matProjection_, blockworld);
-			blocks_.push_back(std::move(newBlock));
-		} {
-			std::unique_ptr<Block> newBlock = std::make_unique<Block>();
-			blockworld.initialize();
-			blockworld.translation = { -16,0,3 };
-			blockworld.scale = { 1,4,7 };
-			newBlock->Initialize(viewProjection_, matProjection_, blockworld);
-			blocks_.push_back(std::move(newBlock));
-		}
-
-
-		//‹¾
+	}else if (stage == 1) {
+		//é¡
 		WorldTransform mirrorworld;
 		{
 			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
@@ -172,56 +160,54 @@ void Map::Reset(int stage) {
 }
 
 void Map::Update() {
-	//ƒfƒoƒbƒO—p•Ç
+	//ãƒ‡ãƒãƒƒã‚°ç”¨å£
 	wallObject->Update();
-
-	//ƒvƒŒƒCƒ„[‚Ìî•ñæ“¾
-	//ƒvƒŒƒCƒ„[À•W
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æƒ…å ±å–å¾—
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åº§æ¨™
 	WorldTransform playerWoorldTransform = player_->GetWorldTransform();
-	//ƒvƒŒƒCƒ„[ƒTƒCƒY
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚µã‚¤ã‚º
 	float playerR = player_->GetR();
 
-	//------------------------------ƒŒ[ƒU[ˆ—-------------------------
-		//ƒŒ[ƒU[‘•’uÀ•Wæ“¾
+//------------------------------ãƒ¬ãƒ¼ã‚¶ãƒ¼å‡¦ç†-------------------------
+	//ãƒ¬ãƒ¼ã‚¶ãƒ¼è£…ç½®åº§æ¨™å–å¾—
 	Vector3 rPos = rLaser->GetPos();
-	//ƒŒ[ƒU[‘•’u‚ÆƒvƒŒƒCƒ„[‚ªÚG‚µ‚Ä‚¢‚é‚©
-	if (playerWoorldTransform.translation.x + playerR >= rPos.x - 1 && playerWoorldTransform.translation.x - playerR <= rPos.x + 1 &&
-		playerWoorldTransform.translation.z + playerR >= rPos.z - 1 && playerWoorldTransform.translation.z - playerR <= rPos.z + 1) {
-		//ƒXƒy[ƒX‚ğ‰Ÿ‚µ‚½‚©(ƒgƒŠƒK[)
+	//ãƒ¬ãƒ¼ã‚¶ãƒ¼è£…ç½®ã¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒæ¥è§¦ã—ã¦ã„ã‚‹ã‹
+	if (playerWoorldTransform.translation.x + playerR >= rPos.x-1 && playerWoorldTransform.translation.x-playerR<= rPos.x + 1&&
+		playerWoorldTransform.translation.z + playerR >= rPos.z -1 && playerWoorldTransform.translation.z - playerR <= rPos.z + 1){
+		//ã‚¹ãƒšãƒ¼ã‚¹ã‚’æŠ¼ã—ãŸã‹(ãƒˆãƒªã‚¬ãƒ¼)
 		if (input.TriggerKey(DIK_SPACE)) {
-			//’¼‘O‚Å‘€ì‚µ‚Ä‚¢‚é‚È‚ç
+			//ç›´å‰ã§æ“ä½œã—ã¦ã„ã‚‹ãªã‚‰
 			if (isControlRLaser) {
-				//‘€ì‚ğ‚â‚ß‚é
+				//æ“ä½œã‚’ã‚„ã‚ã‚‹
 				isControlRLaser = false;
 			}
-			//’¼‘O‚Å‘€ì‚µ‚Ä‚¢‚È‚¢‚È‚ç
+			//ç›´å‰ã§æ“ä½œã—ã¦ã„ãªã„ãªã‚‰
 			else if (isControlRLaser == false) {
-				//‘€ì‚·‚é
+				//æ“ä½œã™ã‚‹
 				isControlRLaser = true;
 			}
 		}
-	}
-	else {
-		//ÚG‚µ‚Ä‚¢‚È‚¢‚È‚ç‘€ì‚Í‚Å‚«‚È‚¢
+	}else {
+		//æ¥è§¦ã—ã¦ã„ãªã„ãªã‚‰æ“ä½œã¯ã§ããªã„
 		isControlRLaser = false;
 	}
 
-	//-----ƒŒ[ƒU[‚ÌXV--------
-		//‘€ì‚µ‚Ä‚¢‚é‚È‚ç
+//-----ãƒ¬ãƒ¼ã‚¶ãƒ¼ã®æ›´æ–°--------
+	//æ“ä½œã—ã¦ã„ã‚‹ãªã‚‰
 	if (isControlRLaser) {
-		//ƒŒ[ƒU[‘•’u‚Ì‰ñ“]
+		//ãƒ¬ãƒ¼ã‚¶ãƒ¼è£…ç½®ã®å›è»¢
 		rLaser->Rotate();
 
 		float dis;
 
-		//ƒŒ[ƒU[‘S‚Ä‚ÌƒŒƒC‚É‚¨‚¢‚Ä
+		//ãƒ¬ãƒ¼ã‚¶ãƒ¼å…¨ã¦ã®ãƒ¬ã‚¤ã«ãŠã„ã¦
 		for (int i = 0; i < 9; i++) {
 			dis = 512.0f;
 
-			//ƒŒƒC‚ğæ“¾
+			//ãƒ¬ã‚¤ã‚’å–å¾—
 			Ray* ray = rLaser->GetRay();
 
-			//ƒŒƒC‚Æ•Ç‚Ì“–‚½‚è”»’è
+			//ãƒ¬ã‚¤ã¨å£ã®å½“ãŸã‚Šåˆ¤å®š
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], frontPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], backPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], leftPlane, &dis);
@@ -229,27 +215,27 @@ void Map::Update() {
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], upPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, &dis);
 
-			//ƒŒƒC‚ÆƒuƒƒbƒN‚Ì“–‚½‚è”»’è
+			//ãƒ¬ã‚¤ã¨ãƒ–ãƒ­ãƒƒã‚¯ã®å½“ãŸã‚Šåˆ¤å®š
 			for (std::unique_ptr<Block>& block : blocks_) {
 				block->CheckCollision(ray, i, &dis);
 			}
-
-			//ƒŒƒC‚Æ‹¾‚Ì“–‚½‚è”»’è
+      
+			//ãƒ¬ã‚¤ã¨é¡ã®å½“ãŸã‚Šåˆ¤å®š
 			for (std::unique_ptr<Mirror>& mirror : mirrors_) {
 				mirror->CheckCollision(ray, i, &dis);
 			}
-			//ƒŒƒC‚ÆƒNƒŠƒXƒ^ƒ‹‚Ì“–‚½‚è”»’è
+			//ãƒ¬ã‚¤ã¨ã‚¯ãƒªã‚¹ã‚¿ãƒ«ã®å½“ãŸã‚Šåˆ¤å®š
 			isHitRLaser = crystal->CheckCollision(ray, i, &dis);
 
-			//”½Ë‰ñ”‚ğXV
+			//åå°„å›æ•°ã‚’æ›´æ–°
 			rLaser->reflection = i;
 
-			//”½Ë‚Å‚«‚Ä‚¢‚È‚©‚Á‚½‚ç
+			//åå°„ã§ãã¦ã„ãªã‹ã£ãŸã‚‰
 			if (ray[i + 1].isReflection == false) {
 				break;
 			}
 		}
-		//ƒŒ[ƒU[XV
+		//ãƒ¬ãƒ¼ã‚¶ãƒ¼æ›´æ–°
 		rLaser->Affine();
 	}
 
@@ -285,7 +271,7 @@ void Map::Update() {
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], upPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, &dis);
 
-			//ƒŒƒC‚ÆƒuƒƒbƒN‚Ì“–‚½‚è”»’è
+			//ãƒ¬ã‚¤ã¨ãƒ–ãƒ­ãƒƒã‚¯ã®å½“ãŸã‚Šåˆ¤å®š
 			for (std::unique_ptr<Block>& block : blocks_) {
 				block->CheckCollision(ray, i, &dis);
 			}
@@ -336,7 +322,7 @@ void Map::Update() {
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], upPlane, &dis);
 			Collision::CheckRay2Plane(ray[i], ray[i + 1], downPlane, &dis);
 
-			//ƒŒƒC‚ÆƒuƒƒbƒN‚Ì“–‚½‚è”»’è
+			//ãƒ¬ã‚¤ã¨ãƒ–ãƒ­ãƒƒã‚¯ã®å½“ãŸã‚Šåˆ¤å®š
 			for (std::unique_ptr<Block>& block : blocks_) {
 				block->CheckCollision(ray, i, &dis);
 			}
@@ -357,18 +343,19 @@ void Map::Update() {
 	}
 
 
-	//XV
+	//æ›´æ–°
 	rLaser->Update();
 	gLaser->Update();
 	bLaser->Update();
 
-	//ƒŒƒC‚ÆƒuƒƒbƒN‚Ì“–‚½‚è”»’è
+	//ãƒ¬ã‚¤ã¨ãƒ–ãƒ­ãƒƒã‚¯ã®å½“ãŸã‚Šåˆ¤å®š
 	for (std::unique_ptr<Block>& block : blocks_) {
 		block->Update();
 	}
 	for (std::unique_ptr<Mirror>& mirror : mirrors_) {
 		mirror->Update();
 	}
+  
 	crystal->Update();
 }
 
@@ -386,7 +373,7 @@ void Map::Draw() {
 	crystal->Draw();
 }
 
-//‘€ì‚µ‚Ä‚¢‚é‚©
+//æ“ä½œã—ã¦ã„ã‚‹ã‹
 bool Map::GetIsControlLaser() {
 	if (isControlRLaser) {
 		return true;
@@ -398,11 +385,11 @@ bool Map::GetIsControlLaser() {
 	return false;
 }
 
-//n“_Ø‚è‘Ö‚¦
+//å§‹ç‚¹åˆ‡ã‚Šæ›¿ãˆ
 ViewProjection Map::GetView() {
 	ViewProjection viewProjection;
 
-	//‘€ì‚µ‚Ä‚¢‚é‘•’u‚Ì‹“_‚ÉØ‚è‘Ö‚¦
+	//æ“ä½œã—ã¦ã„ã‚‹è£…ç½®ã®è¦–ç‚¹ã«åˆ‡ã‚Šæ›¿ãˆ
 	if (isControlRLaser == true) {
 		viewProjection = rLaser->GetView();
 	}
