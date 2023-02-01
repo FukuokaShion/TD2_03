@@ -24,7 +24,7 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; };
 
-	bool CheckCollisionPlayer2map(WorldTransform playerPos,Vector3 velocity);
+	void CheckCollisionPlayer2map(WorldTransform* playerPos,Vector3 velocity);
 
 	//ƒŒ[ƒU[‚ğ‘€ì‚µ‚Ä‚¢‚é‚©
 	bool GetIsControlLaser();

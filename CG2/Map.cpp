@@ -13,7 +13,7 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	viewProjection_ = viewProjection;
 	matProjection_ = matProjection;
 
-//------------デバッグ用壁----------------
+	//------------デバッグ用壁----------------
 	wallObject = new GameObject3D();
 	wallObject->PreLoadModel("Resources/box/box.obj");
 	wallObject->PreLoadTexture(L"Resources/box/box.png");
@@ -56,8 +56,8 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	downPlane.pos = { 0,-1,0 };
 	downPlane.size = { 40,0,40 };
 
-//----------------------------
-	//レーザー
+	//----------------------------
+		//レーザー
 	rLaser = new Laser();
 	rLaser->Initialize(viewProjection, matProjection, Colour::RED, { 0,0,8 });
 	gLaser = new Laser();
@@ -85,15 +85,21 @@ void Map::Reset(int stage) {
 	isHitRLaser = false;
 	isHitGLaser = false;
 	isHitBLaser = false;
+
 	if (stage == 0) {
-		//ブロック
+		//json読み込み
 		WorldTransform blockworld;
+
+
 		{
 			std::unique_ptr<Block> newBlock = std::make_unique<Block>();
+
 			blockworld.initialize();
 			blockworld.translation = { -15,2,15 };
 			blockworld.scale = { 2,4,2 };
+
 			newBlock->Initialize(viewProjection_, matProjection_, blockworld);
+
 			blocks_.push_back(std::move(newBlock));
 		}
 		//鏡
@@ -106,7 +112,8 @@ void Map::Reset(int stage) {
 			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
 			mirrors_.push_back(std::move(newMirror));
 		}
-	}else if (stage == 1) {
+	}
+	else if (stage == 1) {
 		//ブロック
 		WorldTransform blockworld;
 		{
@@ -167,19 +174,19 @@ void Map::Reset(int stage) {
 void Map::Update() {
 	//デバッグ用壁
 	wallObject->Update();
-	
+
 	//プレイヤーの情報取得
 	//プレイヤー座標
 	WorldTransform playerWoorldTransform = player_->GetWorldTransform();
 	//プレイヤーサイズ
 	float playerR = player_->GetR();
 
-//------------------------------レーザー処理-------------------------
-	//レーザー装置座標取得
+	//------------------------------レーザー処理-------------------------
+		//レーザー装置座標取得
 	Vector3 rPos = rLaser->GetPos();
 	//レーザー装置とプレイヤーが接触しているか
-	if (playerWoorldTransform.translation.x + playerR >= rPos.x-1 && playerWoorldTransform.translation.x-playerR<= rPos.x + 1&&
-		playerWoorldTransform.translation.z + playerR >= rPos.z -1 && playerWoorldTransform.translation.z - playerR <= rPos.z + 1){
+	if (playerWoorldTransform.translation.x + playerR >= rPos.x - 1 && playerWoorldTransform.translation.x - playerR <= rPos.x + 1 &&
+		playerWoorldTransform.translation.z + playerR >= rPos.z - 1 && playerWoorldTransform.translation.z - playerR <= rPos.z + 1) {
 		//スペースを押したか(トリガー)
 		if (input.TriggerKey(DIK_SPACE)) {
 			//直前で操作しているなら
@@ -193,13 +200,14 @@ void Map::Update() {
 				isControlRLaser = true;
 			}
 		}
-	}else {
+	}
+	else {
 		//接触していないなら操作はできない
 		isControlRLaser = false;
 	}
 
-//-----レーザーの更新--------
-	//操作しているなら
+	//-----レーザーの更新--------
+		//操作しているなら
 	if (isControlRLaser) {
 		//レーザー装置の回転
 		rLaser->Rotate();
@@ -408,18 +416,41 @@ ViewProjection Map::GetView() {
 }
 
 
-bool Map::CheckCollisionPlayer2map(WorldTransform playerPos,Vector3 velocity) {
-	
+void Map::CheckCollisionPlayer2map(WorldTransform* playerPos, Vector3 velocity) {
+	WorldTransform* playerPos_;
+	playerPos_ = playerPos;
+	playerPos_->translation += velocity;
+
 	for (std::unique_ptr<Block>& block : blocks_) {
-		if (playerPos.translation.x - 1 < block->obj->worldTransform.translation.x + block->obj->worldTransform.scale.x && playerPos.translation.x + 1 > block->obj->worldTransform.translation.x - block->obj->worldTransform.scale.x) {
-			if (playerPos.translation.z - 1 < block->obj->worldTransform.translation.z + block->obj->worldTransform.scale.z && playerPos.translation.z + 1 > block->obj->worldTransform.translation.z - block->obj->worldTransform.scale.z) {
-				if (playerPos.translation.y - 1 < block->obj->worldTransform.translation.y + block->obj->worldTransform.scale.y && playerPos.translation.y + 1 > block->obj->worldTransform.translation.y - block->obj->worldTransform.scale.y) {
-					return true;
+		if (playerPos_->translation.x - 1 < block->obj->worldTransform.translation.x + block->obj->worldTransform.scale.x && playerPos_->translation.x + 1 > block->obj->worldTransform.translation.x - block->obj->worldTransform.scale.x) {
+			if (playerPos_->translation.y - 1 < block->obj->worldTransform.translation.y + block->obj->worldTransform.scale.y && playerPos_->translation.y + 1 > block->obj->worldTransform.translation.y - block->obj->worldTransform.scale.y) {
+				if (playerPos_->translation.z - 1 < block->obj->worldTransform.translation.z + block->obj->worldTransform.scale.z && playerPos_->translation.z + 1 > block->obj->worldTransform.translation.z - block->obj->worldTransform.scale.z) {
+					
+					Vector3 blockVec;
+					blockVec = { block->obj->worldTransform.scale.x,0,block->obj->worldTransform.scale.z };
+					blockVec.nomalize();
+
+					Vector3 block2player;
+					block2player.x = playerPos_->translation.x - block->obj->worldTransform.translation.x;
+					block2player.y = 0;
+					block2player.z = playerPos_->translation.z - block->obj->worldTransform.translation.z;
+					block2player.nomalize();
+
+					if (blockVec.x < block2player.x) {
+						playerPos_->translation.x = block->obj->worldTransform.translation.x + block->obj->worldTransform.scale.x + 1;
+					}else if (-blockVec.x > block2player.x) {
+						playerPos_->translation.x = block->obj->worldTransform.translation.x - block->obj->worldTransform.scale.x - 1;
+					}
+
+					if (blockVec.z < block2player.z) {
+						playerPos_->translation.z = block->obj->worldTransform.translation.z + block->obj->worldTransform.scale.z + 1;
+					}else if (-blockVec.z > block2player.z) {
+						playerPos_->translation.z = block->obj->worldTransform.translation.z - block->obj->worldTransform.scale.z - 1;
+					}
 				}
 			}
 		}
 	}
+	playerPos = playerPos_;
 
-
-	return false;
 }
