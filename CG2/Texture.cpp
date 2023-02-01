@@ -27,7 +27,7 @@ void Texture::LoadTexture(const wchar_t* fileName) {
 			scratchImg
 		);
 	}
-
+	assert(SUCCEEDED(result));
 	//ミップマップ生成
 	result = GenerateMipMaps(
 		scratchImg.GetImages() ,
@@ -37,6 +37,9 @@ void Texture::LoadTexture(const wchar_t* fileName) {
 		0 ,
 		mipChain
 	);
+
+	
+
 	if (SUCCEEDED(result)) {
 		scratchImg = std::move(mipChain);
 		metadata = scratchImg.GetMetadata();
