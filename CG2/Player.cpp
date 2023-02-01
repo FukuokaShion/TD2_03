@@ -1,4 +1,5 @@
 #include "Player.h"
+#include"Map.h"
 #include<cmath>
 
 Player::Player() {
@@ -39,9 +40,6 @@ void Player::Reset() {
 void Player::Update() {
 
 	Attack();
-	
-
-	
 	viewTargetMat.m[3][0] = viewTarget.x;
 	viewTargetMat.m[3][1] = viewTarget.y;
 	viewTargetMat.m[3][2] = viewTarget.z;
@@ -57,7 +55,6 @@ void Player::Update() {
 	viewProjection_.target.z = viewTargetMat.m[3][2];
 
 	viewProjection_.UpdateView(GetAimPos(), player_->worldTransform);
-
 
 	player_->Update();
 }
@@ -127,9 +124,12 @@ void Player::Move() {
 	//速度ベクトルを自機の向きに合わせて回転させる
 	velocity = bVelocity(velocity, player_->worldTransform);
 
-	//移動
-	player_->worldTransform.translation += velocity;
-	
+	WorldTransform preMovePos = player_->worldTransform;
+	preMovePos.translation += velocity;
+	if (map_->CheckCollisionPlayer2map(preMovePos, velocity) == false) {
+		//移動
+		player_->worldTransform.translation += velocity;
+	}
 }
 
 void Player::Attack() {

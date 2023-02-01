@@ -2,7 +2,6 @@
 #include<vector>
 #include<list>
 #include<memory>
-
 #include"Laser.h"
 #include"Player.h"
 
@@ -27,11 +26,13 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; };
 
-	//ƒŒ[ƒU[‚ğ‘€ì‚µ‚Ä‚¢‚é‚©
+	bool CheckCollisionPlayer2map(WorldTransform playerPos,Vector3 velocity);
+
+	//ãƒ¬ãƒ¼ã‚¶ãƒ¼ã‚’æ“ä½œã—ã¦ã„ã‚‹ã‹
 	bool GetIsControlLaser();
-	//ƒŒ[ƒU[‘€ì‚Ìn“_Ø‚è‘Ö‚¦
+	//ãƒ¬ãƒ¼ã‚¶ãƒ¼æ“ä½œæ™‚ã®å§‹ç‚¹åˆ‡ã‚Šæ›¿ãˆ
 	ViewProjection GetView();
-	//ƒŒ[ƒU[‚ªƒNƒŠƒXƒ^ƒ‹‚É“–‚½‚Á‚Ä‚¢‚é‚©
+	//ãƒ¬ãƒ¼ã‚¶ãƒ¼ãŒã‚¯ãƒªã‚¹ã‚¿ãƒ«ã«å½“ãŸã£ã¦ã„ã‚‹ã‹
 	bool IsHitRLaser() { return isHitRLaser; };
 	bool IsHitGLaser() { return isHitGLaser; };
 	bool IsHitBLaser() { return isHitBLaser; };
@@ -43,33 +44,33 @@ private:
 		GREEN,
 		BLUE
 	};
-	//ƒL[“ü—Í
+	//ã‚­ãƒ¼å…¥åŠ›
 	Input& input = Input::GetInstance();
 
-	//ƒvƒŒƒCƒ„[
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
 	Player* player_ = nullptr;
 
-//-----ƒŒ[ƒU[-------
-	//ƒ‚ƒfƒ‹
+//-----ãƒ¬ãƒ¼ã‚¶ãƒ¼-------
+	//ãƒ¢ãƒ‡ãƒ«
 	Laser* rLaser = nullptr;
-	//‘€ì‚µ‚Ä‚¢‚é‚©
+	//æ“ä½œã—ã¦ã„ã‚‹ã‹
 	bool isControlRLaser = false;
-	//ƒ‚ƒfƒ‹
+	//ãƒ¢ãƒ‡ãƒ«
 	Laser* gLaser = nullptr;
-	//‘€ì‚µ‚Ä‚¢‚é‚©
+	//æ“ä½œã—ã¦ã„ã‚‹ã‹
 	bool isControlGLaser = false;
-	//ƒ‚ƒfƒ‹
+	//ãƒ¢ãƒ‡ãƒ«
 	Laser* bLaser = nullptr;
-	//‘€ì‚µ‚Ä‚¢‚é‚©
+	//æ“ä½œã—ã¦ã„ã‚‹ã‹
 	bool isControlBLaser = false;
 
-	//ƒNƒŠƒXƒ^ƒ‹‚É“–‚½‚Á‚Ä‚¢‚é‚©
+	//ã‚¯ãƒªã‚¹ã‚¿ãƒ«ã«å½“ãŸã£ã¦ã„ã‚‹ã‹
 	bool isHitRLaser = false;
 	bool isHitGLaser = false;
 	bool isHitBLaser = false;
 
 //--------------------
-	//ƒfƒoƒbƒO—pƒtƒB[ƒ‹ƒh
+	//ãƒ‡ãƒãƒƒã‚°ç”¨ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰
 	GameObject3D* wallObject = nullptr;
 	Plane frontPlane;
 	Plane backPlane;
@@ -79,15 +80,18 @@ private:
 	Plane downPlane;
 
 
-	//ƒIƒuƒWƒFƒNƒg
+	XMMATRIX* matProjection_;
+	//ãƒ“ãƒ¥ãƒ¼ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³
+	ViewProjection* viewProjection_;
+
+	//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 	Crystal* crystal;
 
-	std::list<std::unique_ptr<Block>>blocks;
-	Block* block2;
+	std::list<std::unique_ptr<Block>> blocks_;
+	std::list<std::unique_ptr<Mirror>> mirrors_;
 
-	Mirror* mirror;
 
-	//json“Ç‚İ‚İ
+	//jsonèª­ã¿è¾¼ã¿
 	LoadJson loadJson;
 
 };

@@ -34,6 +34,7 @@ void GameScene::Initialize(WinApp* winApp) {
 	map->Initialize(&viewProjection_, &matProjection_);
 
 	map->SetPlayer(player_);
+	player_->SetMap(map);
 //----------------
 	//スプライト読み込み
 	Sprite::LoadTexture(1, L"Resources/title.png");
@@ -45,7 +46,6 @@ void GameScene::Initialize(WinApp* winApp) {
 	clear_ = Sprite::Create(2, { 0 , 0 });
 	gameOver_ = Sprite::Create(3, { 0 , 0 });
 
-
 }
 
 void GameScene::Update() {
@@ -54,13 +54,19 @@ void GameScene::Update() {
 	switch (scene)
 	{
 	case Scene::Title:
-		GameScene::Reset();
 
-		if (input_.TriggerKey(DIK_SPACE)) {
+		if (input_.TriggerKey(DIK_0)) {
 			//カーソルの非表示
 			ShowCursor(FALSE);
+			player_->Reset();
 			map->Reset(0);
 			scene = Scene::Play; 
+		}else if (input_.TriggerKey(DIK_1)) {
+			//カーソルの非表示
+			ShowCursor(FALSE);
+			player_->Reset();
+			map->Reset(1);
+			scene = Scene::Play;
 		}
 		
 		break;
@@ -75,10 +81,11 @@ void GameScene::Update() {
 			viewProjection_ = map->GetView();
 		}else {
 			//プレイヤー
-			player_->Update();
-			player_->Rotate();
 			player_->Move();
+
+			player_->Rotate();
 			viewProjection_ = player_->GetView();
+			player_->Update();
 		}
 
 		//全てのレーザーがクリスタルに当たっているなら
@@ -149,11 +156,6 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 }
 
-void GameScene::Reset() {
-	player_->Reset();
-	map->Reset(0);
-
-}
 
 //void GameScene::CheckAllCollisions() {
 //	//敵と自弾

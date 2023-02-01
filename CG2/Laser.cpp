@@ -19,7 +19,7 @@ Laser::~Laser() {
 void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, int colour,Vector3 pos) {
 	GetCursorPos(&mousePos);
 	viewProjection_.Initialize();
-	viewProjection_.eye = Vector3{ 0,1.5f,0 };
+	viewProjection_.eye = Vector3{ 0,1.5f,-5 };
 	viewTargetMat.SetIdentityMatrix();
 
 	//装置モデル初期設定
@@ -183,7 +183,6 @@ void Laser::Affine() {
 		laser_[i]->worldTransform.rotation = BulletRota(ray[i].start, ray[i + 1].start);
 		laser_[i]->worldTransform.scale.x = BulletScale(ray[i].start, ray[i + 1].start);
 		laser_[i]->worldTransform.translation = ray[i].start;
-		//laser_[i]->worldTransform.translation = BulletTrans(ray[i].start, ray[i + 1].start);
 	}
 }
 
@@ -228,34 +227,9 @@ Vector3 BulletRota(Vector3 pos1, Vector3 pos2) {
 	Vector3 rota;
 	float PI = 3.141592;
 
-	//アークタンジェントで角度の計算
-	//向く面は同じ
-	//if (abs(pos2.z - pos1.z) <= abs(pos2.x - pos1.x) && pos2.x - pos1.x > 0) {
-	//	rota.z = atan2(pos2.y - pos1.y, pos2.x - pos1.x);
-	//	rota.y = -atan2(pos2.z - pos1.z, pos2.x - pos1.x);
-	//	rota.x = 0;
-	//}
-	//else if (abs(pos2.z - pos1.z) <= abs(pos2.x - pos1.x) && pos2.x - pos1.x < 0) {
-	//	rota.z = -atan2(pos2.y - pos1.y, pos2.x - pos1.x) + PI;
-	//	rota.y = -atan2(pos2.z - pos1.z, pos2.x - pos1.x);
-	//	rota.x = 0;
-	//}
-	//else if (abs(pos2.z - pos1.z) > abs(pos2.x - pos1.x) && pos2.z - pos1.z > 0) {
-	//	rota.z = atan2(pos2.y - pos1.y, pos2.z - pos1.z);
-	//	rota.y = -atan2(pos2.z - pos1.z, pos2.x - pos1.x);
-	//	rota.x = 0;
-	//}
-	//else if (abs(pos2.z - pos1.z) > abs(pos2.x - pos1.x) && pos2.z - pos1.z < 0) {
-	//	rota.z = -atan2(pos2.y - pos1.y, pos2.z - pos1.z) + PI;
-	//	rota.y = -atan2(pos2.z - pos1.z, pos2.x - pos1.x);
-	//	rota.x = 0;
-	//}
-
 	rota.y = atan2(pos2.x - pos1.x, pos2.z - pos1.z) - (PI / 2);
 	rota.z = atan2(pos2.y - pos1.y, sqrt(pow(pos2.x - pos1.x, 2) + pow(pos2.z - pos1.z, 2)));
 	rota.x = 0;
-
-
 
 	return rota;
 }
