@@ -109,7 +109,6 @@ void Map::Reset(int stage) {
 	}
 	if (stage == 0) {
   
-	//block->Initialize(viewProjection, matProjection, blockworld);
 		//鏡
 		WorldTransform mirrorworld;
 		{
@@ -438,6 +437,19 @@ void Map::CheckCollisionPlayer2map(WorldTransform* playerPos, Vector3 velocity) 
 			}
 		}
 	}
+
+	if (playerPos_->translation.x < -40 + 1) {
+		playerPos_->translation.x = -40 + 1;
+	}else if (playerPos_->translation.x > 40 - 1) {
+		playerPos_->translation.x = 40 - 1;
+	}
+
+	if (playerPos_->translation.z < -40 + 1) {
+		playerPos_->translation.z = -40 + 1;
+	}else if (playerPos_->translation.z > 40 - 1) {
+		playerPos_->translation.z = 40 - 1;
+	}
+
 	playerPos = playerPos_;
 
 }
