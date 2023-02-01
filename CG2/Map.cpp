@@ -86,12 +86,10 @@ void Map::Reset(int stage) {
 	isHitRLaser = false;
 	isHitGLaser = false;
 	isHitBLaser = false;
-	if (stage == 0) {
-  
 	std::vector<WorldTransform> blockworld;
 	//念のため中身をきれいに
 	blockworld.clear();
-	blocks.remove_if([](std::unique_ptr<Block>& block) { return true; });
+	blocks_.remove_if([](std::unique_ptr<Block>& block) { return true; });
 	//jsonファイルから値を抽出
 	loadJson.LoadFromJson(stage, "Block.json");
 	for (size_t i = 0; i < loadJson.worldTrans.size(); i++)
@@ -104,11 +102,13 @@ void Map::Reset(int stage) {
 		//ブロックを生成し、初期化
 		std::unique_ptr<Block> newBlock = std::make_unique<Block>();
 
-		newBlock->Initialize(viewProjection, matProjection, blockworld[i]);
+		newBlock->Initialize(viewProjection_, matProjection_, blockworld[i]);
 
 		//ブロックを登録する
-		blocks.push_back(std::move(newBlock));
+		blocks_.push_back(std::move(newBlock));
 	}
+	if (stage == 0) {
+  
 	//block->Initialize(viewProjection, matProjection, blockworld);
 		//鏡
 		WorldTransform mirrorworld;
@@ -121,25 +121,6 @@ void Map::Reset(int stage) {
 			mirrors_.push_back(std::move(newMirror));
 		}
 	}else if (stage == 1) {
-		//ブロック
-		WorldTransform blockworld;
-		{
-			std::unique_ptr<Block> newBlock = std::make_unique<Block>();
-			blockworld.initialize();
-			blockworld.translation = { 7,0,0 };
-			blockworld.scale = { 1,6,13 };
-			newBlock->Initialize(viewProjection_, matProjection_, blockworld);
-			blocks_.push_back(std::move(newBlock));
-		} {
-			std::unique_ptr<Block> newBlock = std::make_unique<Block>();
-			blockworld.initialize();
-			blockworld.translation = { -16,0,3 };
-			blockworld.scale = { 1,4,7 };
-			newBlock->Initialize(viewProjection_, matProjection_, blockworld);
-			blocks_.push_back(std::move(newBlock));
-		}
-
-
 		//鏡
 		WorldTransform mirrorworld;
 		{

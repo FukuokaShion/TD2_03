@@ -9,6 +9,9 @@ void LoadJson::LoadFromJson(int stage,std::string fileName) {
 	std::string stageStr = "1";
 	switch (stage)
 	{
+	case 0:
+		stageStr = "0";
+		break;
 	case 1:
 		stageStr = "1";
 		break;
