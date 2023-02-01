@@ -86,96 +86,54 @@ void Map::Reset(int stage) {
 	isHitRLaser = false;
 	isHitGLaser = false;
 	isHitBLaser = false;
-	if (stage == 0) {
-  
-	std::vector<WorldTransform> blockworld;
-	//念のため中身をきれいに
-	blockworld.clear();
-	blocks.remove_if([](std::unique_ptr<Block>& block) { return true; });
-	//jsonファイルから値を抽出
-	loadJson.LoadFromJson(stage, "Block.json");
-	for (size_t i = 0; i < loadJson.worldTrans.size(); i++)
+	//ブロック
 	{
-		blockworld.push_back(loadJson.worldTrans[i]);
-	}
-	
-	for (size_t i = 0; i < blockworld.size(); i++)
+			std::vector<WorldTransform> blockWorld;
+			//念のため中身をきれいに
+			blockWorld.clear();
+			blocks_.remove_if([](std::unique_ptr<Block>& block) { return true; });
+			//jsonファイルから値を抽出
+			loadJson.LoadFromJson(stage, "Block.json");
+			for (size_t i = 0; i < loadJson.worldTrans.size(); i++)
+			{
+				blockWorld.push_back(loadJson.worldTrans[i]);
+			}
+
+			for (size_t i = 0; i < blockWorld.size(); i++)
+			{
+				//ブロックを生成し、初期化
+				std::unique_ptr<Block> newBlock = std::make_unique<Block>();
+
+				newBlock->Initialize(viewProjection_, matProjection_, blockWorld[i]);
+
+				//ブロックを登録する
+				blocks_.push_back(std::move(newBlock));
+			}
+		}
+	//鏡
 	{
-		//ブロックを生成し、初期化
-		std::unique_ptr<Block> newBlock = std::make_unique<Block>();
+			std::vector<WorldTransform> mirrorWorld;
+			//念のため中身をきれいに
+			mirrorWorld.clear();
+			mirrors_.remove_if([](std::unique_ptr<Mirror>& mirror) { return true; });
+			//jsonファイルから値を抽出
+			loadJson.LoadFromJson(stage, "Mirror.json");
+			for (size_t i = 0; i < loadJson.worldTrans.size(); i++)
+			{
+				mirrorWorld.push_back(loadJson.worldTrans[i]);
+			}
 
-		newBlock->Initialize(viewProjection, matProjection, blockworld[i]);
+			for (size_t i = 0; i < mirrorWorld.size(); i++)
+			{
+				//ブロックを生成し、初期化
+				std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
 
-		//ブロックを登録する
-		blocks.push_back(std::move(newBlock));
-	}
-	//block->Initialize(viewProjection, matProjection, blockworld);
-		//鏡
-		WorldTransform mirrorworld;
-		{
-			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
-			mirrorworld.initialize();
-			mirrorworld.translation = { 0,4,40 };
-			mirrorworld.scale = { 3,3,0.1f };
-			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
-			mirrors_.push_back(std::move(newMirror));
-		}
-	}else if (stage == 1) {
-		//ブロック
-		WorldTransform blockworld;
-		{
-			std::unique_ptr<Block> newBlock = std::make_unique<Block>();
-			blockworld.initialize();
-			blockworld.translation = { 7,0,0 };
-			blockworld.scale = { 1,6,13 };
-			newBlock->Initialize(viewProjection_, matProjection_, blockworld);
-			blocks_.push_back(std::move(newBlock));
-		} {
-			std::unique_ptr<Block> newBlock = std::make_unique<Block>();
-			blockworld.initialize();
-			blockworld.translation = { -16,0,3 };
-			blockworld.scale = { 1,4,7 };
-			newBlock->Initialize(viewProjection_, matProjection_, blockworld);
-			blocks_.push_back(std::move(newBlock));
-		}
+				newMirror->Initialize(viewProjection_, matProjection_, mirrorWorld[i]);
 
-
-		//鏡
-		WorldTransform mirrorworld;
-		{
-			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
-			mirrorworld.initialize();
-			mirrorworld.translation = { 8,4,40 };
-			mirrorworld.scale = { 3,3,0.1f };
-			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
-			mirrors_.push_back(std::move(newMirror));
+				//ブロックを登録する
+				mirrors_.push_back(std::move(newMirror));
+			}
 		}
-		{
-			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
-			mirrorworld.initialize();
-			mirrorworld.translation = { -40,5,20 };
-			mirrorworld.scale = { 0.1f,3,3 };
-			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
-			mirrors_.push_back(std::move(newMirror));
-		}
-		{
-			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
-			mirrorworld.initialize();
-			mirrorworld.translation = { -20,5,40 };
-			mirrorworld.scale = { 3,3,0.1f };
-			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
-			mirrors_.push_back(std::move(newMirror));
-		}
-		{
-			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
-			mirrorworld.initialize();
-			mirrorworld.translation = { 80,40,40 };
-			mirrorworld.scale = { 3,3,0.1f };
-			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
-			mirrors_.push_back(std::move(newMirror));
-		}
-	}
-
 }
 
 void Map::Update() {
