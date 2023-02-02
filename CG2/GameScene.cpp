@@ -41,10 +41,14 @@ void GameScene::Initialize(WinApp* winApp) {
 	Sprite::LoadTexture(2, L"Resources/GameClear.png");
 	Sprite::LoadTexture(3, L"Resources/GameOver.png");
 
+	//ステージ1のような画像読み込みがあると思うので適当に空けて8番目から
+	Sprite::LoadTexture(8, L"Resources/key.png");
+
 	//スプライトの設定
 	title_ = Sprite::Create(1, { 0 , 0 });
 	clear_ = Sprite::Create(2, { 0 , 0 });
 	gameOver_ = Sprite::Create(3, { 0 , 0 });
+	command = Sprite::Create(8, { 1020 , 0 });
 
 }
 
@@ -141,7 +145,8 @@ void GameScene::Draw() {
 
 		break;
 	case Scene::Play:
-
+		command->Draw();
+		map->Draw2D();
 		break;
 	case Scene::Clear:
 		clear_->Draw();

@@ -59,7 +59,8 @@ private: // メンバ変数
 	Sprite* title_ = nullptr;
 	Sprite* clear_ = nullptr;
 	Sprite* gameOver_ = nullptr;
-
+	Sprite* command = nullptr;
+	Sprite* commandSpace = nullptr;
 //-------
 
 	//プレイヤー

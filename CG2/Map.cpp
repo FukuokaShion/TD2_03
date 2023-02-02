@@ -65,6 +65,8 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	bLaser = new Laser();
 	bLaser->Initialize(viewProjection, matProjection, Colour::BLUE, { -20,0,0 });
 
+	Sprite::LoadTexture(9, L"Resources/keySpace.png");
+	commandSpace = Sprite::Create(9, { 1000 , 600 });
 
 	//クリスタル
 	crystal = new Crystal();
@@ -137,6 +139,9 @@ void Map::Reset(int stage) {
 }
 
 void Map::Update() {
+	//スプライト非表示
+	isPlayer = false;
+
 	//デバッグ用壁
 	wallObject->Update();
 	
@@ -152,6 +157,8 @@ void Map::Update() {
 	//レーザー装置とプレイヤーが接触しているか
 	if (playerWoorldTransform.translation.x + playerR >= rPos.x-1 && playerWoorldTransform.translation.x-playerR<= rPos.x + 1&&
 		playerWoorldTransform.translation.z + playerR >= rPos.z -1 && playerWoorldTransform.translation.z - playerR <= rPos.z + 1){
+		//スプライト表示
+		isPlayer = true;
 		//スペースを押したか(トリガー)
 		if (input.TriggerKey(DIK_SPACE)) {
 			//直前で操作しているなら
@@ -221,6 +228,8 @@ void Map::Update() {
 	Vector3 gPos = gLaser->GetPos();
 	if (playerWoorldTransform.translation.x + playerR >= gPos.x - 1 && playerWoorldTransform.translation.x - playerR <= gPos.x + 1 &&
 		playerWoorldTransform.translation.z + playerR >= gPos.z - 1 && playerWoorldTransform.translation.z - playerR <= gPos.z + 1) {
+		//スプライト表示
+		isPlayer = true;
 		if (input.TriggerKey(DIK_SPACE)) {
 			if (isControlGLaser) {
 				isControlGLaser = false;
@@ -272,6 +281,8 @@ void Map::Update() {
 	Vector3 bPos = bLaser->GetPos();
 	if (playerWoorldTransform.translation.x + playerR >= bPos.x - 1 && playerWoorldTransform.translation.x - playerR <= bPos.x + 1 &&
 		playerWoorldTransform.translation.z + playerR >= bPos.z - 1 && playerWoorldTransform.translation.z - playerR <= bPos.z + 1) {
+		//スプライト表示
+		isPlayer = true;
 		if (input.TriggerKey(DIK_SPACE)) {
 			if (isControlBLaser) {
 				isControlBLaser = false;
@@ -349,6 +360,13 @@ void Map::Draw() {
 		mirror->Draw();
 	}
 	crystal->Draw();
+}
+
+void Map::Draw2D() {
+	if (isPlayer)
+	{
+		commandSpace->Draw();
+	}
 }
 
 //操作しているか
