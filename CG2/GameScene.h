@@ -48,17 +48,31 @@ private: // メンバ変数
 	enum class Scene
 	{
 		Title,
+		Option,
+		Select,
 		Play,
 		Clear,
 		Gameover,
 	};
 	Scene scene;
-
+	
+	int button;
+	bool isPause = false;
 	
 //-------
 	Sprite* title_ = nullptr;
+	Sprite* point_ = nullptr;
+	Sprite* optionButton_ = nullptr;
+	Sprite* stageButton_ = nullptr;
+	Sprite* titleButtom_ = nullptr;
+	Sprite* option_ = nullptr;
+	Sprite* stageSelect_ = nullptr;
 	Sprite* clear_ = nullptr;
 	Sprite* gameOver_ = nullptr;
+	Sprite* number_[10];
+	Sprite* ESC_ = nullptr;
+	Sprite* pause_ = nullptr;
+	Sprite* back_ = nullptr;
 
 //-------
 
