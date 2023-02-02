@@ -22,18 +22,18 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 	viewProjection_.eye = Vector3{ 0,1.5f,-5 };
 	viewTargetMat.SetIdentityMatrix();
 
-	//装置モデル初期設定
-	device_ = new GameObject3D();
-	device_->PreLoadModel("Resources/tofu/tofu.obj");
-	device_->PreLoadTexture(L"Resources/tofu/enemy.png");
-	device_->SetViewProjection(viewProjection);
-	device_->SetMatProjection(matProjection);
-	device_->Initialize();
-	device_->worldTransform.translation = pos;
 
 //---------レーザーモデル初期設定------------
 	//Redレーザー
 	if (colour == 0) {
+		//装置モデル初期設定
+		device_ = new GameObject3D();
+		device_->PreLoadModel("Resources/sphere/sphere.obj");
+		device_->PreLoadTexture(L"Resources/redLaser.png");
+		device_->SetViewProjection(viewProjection);
+		device_->SetMatProjection(matProjection);
+		device_->Initialize();
+		device_->worldTransform.translation = pos;
 		for (int i = 0; i < 10; i++) {
 			laser_[i] = new GameObject3D();
 			laser_[i]->PreLoadModel("Resources/cylinder/cylinder.obj");
@@ -46,6 +46,14 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 	}
 	//Greenレーザー
 	if (colour == 1) {
+		//装置モデル初期設定
+		device_ = new GameObject3D();
+		device_->PreLoadModel("Resources/sphere/sphere.obj");
+		device_->PreLoadTexture(L"Resources/greenLaser.png");
+		device_->SetViewProjection(viewProjection);
+		device_->SetMatProjection(matProjection);
+		device_->Initialize();
+		device_->worldTransform.translation = pos;
 		for (int i = 0; i < 10; i++) {
 			laser_[i] = new GameObject3D();
 			laser_[i]->PreLoadModel("Resources/cylinder/cylinder.obj");
@@ -58,6 +66,14 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 	}
 	//Blueレーザー
 	if (colour == 2) {
+		//装置モデル初期設定
+		device_ = new GameObject3D();
+		device_->PreLoadModel("Resources/sphere/sphere.obj");
+		device_->PreLoadTexture(L"Resources/blueLaser.png");
+		device_->SetViewProjection(viewProjection);
+		device_->SetMatProjection(matProjection);
+		device_->Initialize();
+		device_->worldTransform.translation = pos;
 		for (int i = 0; i < 10; i++) {
 			laser_[i] = new GameObject3D();
 			laser_[i]->PreLoadModel("Resources/cylinder/cylinder.obj");
@@ -68,7 +84,6 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 			laser_[i]->worldTransform.scale = { 1,0.3f ,0.3f };
 		}
 	}
-
 }
 
 //初期化

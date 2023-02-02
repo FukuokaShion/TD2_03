@@ -14,7 +14,7 @@ Crystal::~Crystal() {
 void Crystal::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, WorldTransform& worldTransform) {
 	obj = new GameObject3D();
 	obj->PreLoadModel("Resources/tofu/tofu.obj");
-	obj->PreLoadTexture(L"Resources/tofu/block.png");
+	obj->PreLoadTexture(L"Resources/crystal.png");
 	obj->SetViewProjection(viewProjection);
 	obj->SetMatProjection(matProjection);
 	obj->Initialize();
