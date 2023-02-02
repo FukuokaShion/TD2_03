@@ -287,6 +287,7 @@ void GameScene::Reset() {
 		break;
 
 	case Scene::Play:
+		ShowCursor(false);
 		isPause = false;
 		point_->SetPosition({ 568,480 });
 		titleButtom_->SetPosition({ 711,480 });
