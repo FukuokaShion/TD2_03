@@ -29,6 +29,7 @@ public:
 	int GetIsDead() { return isDead; }
 
 	WorldTransform GetWorldTransform() { return player_->worldTransform; }
+	WorldTransform SetWorldTransform(WorldTransform trans) { return player_->worldTransform=trans; }
 
 
 	Vector3 bVelocity(Vector3& velocity, WorldTransform& worldTransform);

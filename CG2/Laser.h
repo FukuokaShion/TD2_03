@@ -28,6 +28,7 @@ public:
 
 	void Reset();
 
+	void SetTransJson(Vector3 trans);
 
 	//向いている向きにベクトル変更
 	Vector3 bVelocity(Vector3& velocity, WorldTransform& worldTransform);
