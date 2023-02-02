@@ -53,9 +53,6 @@ void GameScene::Initialize(WinApp* winApp) {
 	Sprite::LoadTexture(14, L"Resources/back.png");
 
 
-	//ステージ1のような画像読み込みがあると思うので適当に空けて8番目から
-	Sprite::LoadTexture(8, L"Resources/key.png");
-
 	//スプライトの設定
 	title_ = Sprite::Create(1, { 0 , 0 });
 	option_ = Sprite::Create(2, { 0,0 });
