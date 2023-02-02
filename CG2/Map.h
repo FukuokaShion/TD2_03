@@ -7,6 +7,7 @@
 
 #include"Block.h"
 #include"Crystal.h"
+#include"Sprite.h"
 #include"LoadJson.h"
 
 class Player;
@@ -23,6 +24,8 @@ public:
 	void Update();
 
 	void Draw();
+
+	void Draw2D();
 
 	void SetPlayer(Player* player) { player_ = player; };
 
@@ -51,6 +54,9 @@ private:
 	Player* player_ = nullptr;
 
 //-----レーザー-------
+	//プレイヤーとレーザー装置が当たってる時のスプライト 
+	Sprite* commandSpace = nullptr;
+	bool isPlayer = false;
 	//モデル
 	Laser* rLaser = nullptr;
 	//操作しているか

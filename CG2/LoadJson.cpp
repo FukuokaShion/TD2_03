@@ -3,9 +3,22 @@ std::string defaultPath = "Resources/json/";
 
 void LoadJson::LoadFromJson(int stage,std::string fileName) {
 	std::string fullPath = defaultPath + fileName;
+	//jsonファイルの中身をストリーム
 	std::ifstream reading(fullPath, std::ios::in);
+	json j;
 	reading >> j;
+	//ファイルを閉じる
 	reading.close();
+	//中身をクリアに
+	trans_x.clear();
+	trans_y.clear();
+	trans_z.clear();
+
+	scale_x.clear();
+	scale_y.clear();
+	scale_z.clear();
+	worldTrans.clear();
+
 	std::string stageStr = "1";
 	switch (stage)
 	{
@@ -89,9 +102,7 @@ void LoadJson::LoadFromJson(int stage,std::string fileName) {
 	}
 
 	//
-	if (trans_x.size()== trans_y.size()&&trans_z.size() == trans_y.size()&&
-		scale_x.size() == scale_y.size()&&scale_z.size() == scale_y.size()&&
-		trans_x.size() ==scale_x.size())
+	if (trans_x.size()== trans_y.size()&&trans_z.size() == trans_y.size())
 	{
 		for (size_t i = 0; i < trans_x.size(); i++)
 		{

@@ -65,6 +65,8 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	bLaser = new Laser();
 	bLaser->Initialize(viewProjection, matProjection, Colour::BLUE, { -20,0,0 });
 
+	Sprite::LoadTexture(9, L"Resources/keySpace.png");
+	commandSpace = Sprite::Create(9, { 1000 , 600 });
 
 	//クリスタル
 	crystal = new Crystal();
@@ -86,79 +88,60 @@ void Map::Reset(int stage) {
 	isHitRLaser = false;
 	isHitGLaser = false;
 	isHitBLaser = false;
-	std::vector<WorldTransform> blockworld;
-	//念のため中身をきれいに
-	blockworld.clear();
-	blocks_.remove_if([](std::unique_ptr<Block>& block) { return true; });
-	//jsonファイルから値を抽出
-	loadJson.LoadFromJson(stage, "Block.json");
-	for (size_t i = 0; i < loadJson.worldTrans.size(); i++)
+	//ブロック
 	{
-		blockworld.push_back(loadJson.worldTrans[i]);
-	}
-	
-	for (size_t i = 0; i < blockworld.size(); i++)
+			std::vector<WorldTransform> blockWorld;
+			//念のため中身をきれいに
+			blockWorld.clear();
+			blocks_.remove_if([](std::unique_ptr<Block>& block) { return true; });
+			//jsonファイルから値を抽出
+			loadJson.LoadFromJson(stage, "Block.json");
+			for (size_t i = 0; i < loadJson.worldTrans.size(); i++)
+			{
+				blockWorld.push_back(loadJson.worldTrans[i]);
+			}
+
+			for (size_t i = 0; i < blockWorld.size(); i++)
+			{
+				//ブロックを生成し、初期化
+				std::unique_ptr<Block> newBlock = std::make_unique<Block>();
+
+				newBlock->Initialize(viewProjection_, matProjection_, blockWorld[i]);
+
+				//ブロックを登録する
+				blocks_.push_back(std::move(newBlock));
+			}
+		}
+	//鏡
 	{
-		//ブロックを生成し、初期化
-		std::unique_ptr<Block> newBlock = std::make_unique<Block>();
+			std::vector<WorldTransform> mirrorWorld;
+			//念のため中身をきれいに
+			mirrorWorld.clear();
+			mirrors_.remove_if([](std::unique_ptr<Mirror>& mirror) { return true; });
+			//jsonファイルから値を抽出
+			loadJson.LoadFromJson(stage, "Mirror.json");
+			for (size_t i = 0; i < loadJson.worldTrans.size(); i++)
+			{
+				mirrorWorld.push_back(loadJson.worldTrans[i]);
+			}
 
-		newBlock->Initialize(viewProjection_, matProjection_, blockworld[i]);
+			for (size_t i = 0; i < mirrorWorld.size(); i++)
+			{
+				//ブロックを生成し、初期化
+				std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
 
-		//ブロックを登録する
-		blocks_.push_back(std::move(newBlock));
-	}
-	if (stage == 0) {
-  
-		//鏡
-		WorldTransform mirrorworld;
-		{
-			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
-			mirrorworld.initialize();
-			mirrorworld.translation = { 0,4,40 };
-			mirrorworld.scale = { 3,3,0.1f };
-			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
-			mirrors_.push_back(std::move(newMirror));
-		}
-	}else if (stage == 1) {
-		//鏡
-		WorldTransform mirrorworld;
-		{
-			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
-			mirrorworld.initialize();
-			mirrorworld.translation = { 8,4,40 };
-			mirrorworld.scale = { 3,3,0.1f };
-			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
-			mirrors_.push_back(std::move(newMirror));
-		}
-		{
-			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
-			mirrorworld.initialize();
-			mirrorworld.translation = { -40,5,20 };
-			mirrorworld.scale = { 0.1f,3,3 };
-			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
-			mirrors_.push_back(std::move(newMirror));
-		}
-		{
-			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
-			mirrorworld.initialize();
-			mirrorworld.translation = { -20,5,40 };
-			mirrorworld.scale = { 3,3,0.1f };
-			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
-			mirrors_.push_back(std::move(newMirror));
-		}
-		{
-			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
-			mirrorworld.initialize();
-			mirrorworld.translation = { 80,40,40 };
-			mirrorworld.scale = { 3,3,0.1f };
-			newMirror->Initialize(viewProjection_, matProjection_, mirrorworld);
-			mirrors_.push_back(std::move(newMirror));
-		}
-	}
+				newMirror->Initialize(viewProjection_, matProjection_, mirrorWorld[i]);
 
+				//ブロックを登録する
+				mirrors_.push_back(std::move(newMirror));
+			}
+		}
 }
 
 void Map::Update() {
+	//スプライト非表示
+	isPlayer = false;
+
 	//デバッグ用壁
 	wallObject->Update();
 	//プレイヤーの情報取得
@@ -173,6 +156,8 @@ void Map::Update() {
 	//レーザー装置とプレイヤーが接触しているか
 	if (playerWoorldTransform.translation.x + playerR >= rPos.x-1 && playerWoorldTransform.translation.x-playerR<= rPos.x + 1&&
 		playerWoorldTransform.translation.z + playerR >= rPos.z -1 && playerWoorldTransform.translation.z - playerR <= rPos.z + 1){
+		//スプライト表示
+		isPlayer = true;
 		//スペースを押したか(トリガー)
 		if (input.TriggerKey(DIK_SPACE)) {
 			//直前で操作しているなら
@@ -242,6 +227,8 @@ void Map::Update() {
 	Vector3 gPos = gLaser->GetPos();
 	if (playerWoorldTransform.translation.x + playerR >= gPos.x - 1 && playerWoorldTransform.translation.x - playerR <= gPos.x + 1 &&
 		playerWoorldTransform.translation.z + playerR >= gPos.z - 1 && playerWoorldTransform.translation.z - playerR <= gPos.z + 1) {
+		//スプライト表示
+		isPlayer = true;
 		if (input.TriggerKey(DIK_SPACE)) {
 			if (isControlGLaser) {
 				isControlGLaser = false;
@@ -293,6 +280,8 @@ void Map::Update() {
 	Vector3 bPos = bLaser->GetPos();
 	if (playerWoorldTransform.translation.x + playerR >= bPos.x - 1 && playerWoorldTransform.translation.x - playerR <= bPos.x + 1 &&
 		playerWoorldTransform.translation.z + playerR >= bPos.z - 1 && playerWoorldTransform.translation.z - playerR <= bPos.z + 1) {
+		//スプライト表示
+		isPlayer = true;
 		if (input.TriggerKey(DIK_SPACE)) {
 			if (isControlBLaser) {
 				isControlBLaser = false;
@@ -370,6 +359,13 @@ void Map::Draw() {
 		mirror->Draw();
 	}
 	crystal->Draw();
+}
+
+void Map::Draw2D() {
+	if (isPlayer)
+	{
+		commandSpace->Draw();
+	}
 }
 
 //操作しているか
