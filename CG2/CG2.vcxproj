@@ -160,6 +160,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PostEffect.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="ViewProjection.cpp" />
@@ -184,6 +185,8 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="Resources\Shaders\PostEffectTestPS.hlsl" />
+    <FxCompile Include="Resources\Shaders\PostEffectTestVS.hlsl" />
     <FxCompile Include="Resources\Shaders\SpritePixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -201,6 +204,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Basic.hlsli" />
+    <None Include="Resources\Shaders\PostEffectTest.hlsli" />
     <None Include="Resources\Shaders\SpriteShaderHeader.hlsli" />
   </ItemGroup>
   <ItemGroup>
@@ -227,6 +231,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PostEffect.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Sprite.h" />

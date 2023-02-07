@@ -46,7 +46,7 @@ void WinApp::Initialize()
 		nullptr,				//親ウィンドウハンドル
 		nullptr,				//メニューハンドル
 		w.hInstance,			//呼び出しアプリケーションハンドル
-		nullptr,				//オプション
+		nullptr 				//オプション
 		);
 
 	//ウィンドウを表示状態にする
