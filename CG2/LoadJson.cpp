@@ -1,7 +1,7 @@
 #include "LoadJson.h"
 std::string defaultPath = "Resources/json/";
 
-void LoadJson::LoadFromJson(int stage,std::string fileName) {
+void LoadJson::LoadFromJson(int stage,std::string fileName, std::vector<WorldTransform>& worldTrans) {
 	std::string fullPath = defaultPath + fileName;
 	//jsonファイルの中身をストリーム
 	std::ifstream reading(fullPath, std::ios::in);

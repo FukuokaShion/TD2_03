@@ -65,16 +65,12 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	bLaser = new Laser();
 	bLaser->Initialize(viewProjection, matProjection, Colour::BLUE, { -20,0,0 });
 
-	Sprite::LoadTexture(9, L"Resources/keySpace.png");
-	commandSpace = Sprite::Create(9, { 1000 , 600 });
+	Sprite::LoadTexture(50, L"Resources/keySpace.png");
+	commandSpace = Sprite::Create(50, { 1000 , 600 });
 
 	//クリスタル
 	crystal = new Crystal();
-	WorldTransform crystalworld;
-	crystalworld.initialize();
-	crystalworld.translation = { 0,8,20 };
-	crystalworld.scale = { 1,1,1 };
-	crystal->Initialize(viewProjection, matProjection, crystalworld);
+	
 }
 
 
@@ -91,52 +87,62 @@ void Map::Reset(int stage) {
 	isHitRDevice = false;
 	//ブロック
 	{
-			std::vector<WorldTransform> blockWorld;
-			//念のため中身をきれいに
-			blockWorld.clear();
-			blocks_.remove_if([](std::unique_ptr<Block>& block) { return true; });
-			//jsonファイルから値を抽出
-			loadJson.LoadFromJson(stage, "Block.json");
-			for (size_t i = 0; i < loadJson.worldTrans.size(); i++)
-			{
-				blockWorld.push_back(loadJson.worldTrans[i]);
-			}
+		std::vector<WorldTransform> blockWorld;
+		//念のため中身をきれいに
+		blockWorld.clear();
+		blocks_.remove_if([](std::unique_ptr<Block>& block) { return true; });
+		//jsonファイルから値を抽出
+		loadJson.LoadFromJson(stage, "Block.json",blockWorld);
 
-			for (size_t i = 0; i < blockWorld.size(); i++)
-			{
-				//ブロックを生成し、初期化
-				std::unique_ptr<Block> newBlock = std::make_unique<Block>();
+		for (size_t i = 0; i < blockWorld.size(); i++)
+		{
+			//ブロックを生成し、初期化
+			std::unique_ptr<Block> newBlock = std::make_unique<Block>();
 
-				newBlock->Initialize(viewProjection_, matProjection_, blockWorld[i]);
+			newBlock->Initialize(viewProjection_, matProjection_, blockWorld[i]);
 
-				//ブロックを登録する
-				blocks_.push_back(std::move(newBlock));
-			}
+			//ブロックを登録する
+			blocks_.push_back(std::move(newBlock));
 		}
+	}
 	//鏡
 	{
-			std::vector<WorldTransform> mirrorWorld;
-			//念のため中身をきれいに
-			mirrorWorld.clear();
-			mirrors_.remove_if([](std::unique_ptr<Mirror>& mirror) { return true; });
-			//jsonファイルから値を抽出
-			loadJson.LoadFromJson(stage, "Mirror.json");
-			for (size_t i = 0; i < loadJson.worldTrans.size(); i++)
-			{
-				mirrorWorld.push_back(loadJson.worldTrans[i]);
-			}
+		std::vector<WorldTransform> mirrorWorld;
+		//念のため中身をきれいに
+		mirrorWorld.clear();
+		mirrors_.remove_if([](std::unique_ptr<Mirror>& mirror) { return true; });
+		//jsonファイルから値を抽出
+		loadJson.LoadFromJson(stage, "Mirror.json", mirrorWorld);
 
-			for (size_t i = 0; i < mirrorWorld.size(); i++)
-			{
-				//ブロックを生成し、初期化
-				std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
+		for (size_t i = 0; i < mirrorWorld.size(); i++)
+		{
+			//ブロックを生成し、初期化
+			std::unique_ptr<Mirror> newMirror = std::make_unique<Mirror>();
 
-				newMirror->Initialize(viewProjection_, matProjection_, mirrorWorld[i]);
+			newMirror->Initialize(viewProjection_, matProjection_, mirrorWorld[i]);
 
-				//ブロックを登録する
-				mirrors_.push_back(std::move(newMirror));
-			}
+			//ブロックを登録する
+			mirrors_.push_back(std::move(newMirror));
 		}
+	}
+	//クリスタル
+	{
+		//jsonファイルから値を抽出
+		std::vector<WorldTransform> crystalWorld;
+		crystalWorld.clear();
+		loadJson.LoadFromJson(stage, "Crystal.json", crystalWorld);
+		crystal->Initialize(viewProjection_, matProjection_, crystalWorld[0]);
+	}
+	//レーザー装置
+	{
+		//jsonファイルから値を抽出
+		std::vector<WorldTransform> laserWorld;
+		laserWorld.clear();
+		loadJson.LoadFromJson(stage, "Laser.json",laserWorld);
+		rLaser->SetTransJson(laserWorld[0].translation);
+		gLaser->SetTransJson(laserWorld[1].translation);
+		bLaser->SetTransJson(laserWorld[2].translation);
+	}
 }
 
 void Map::Update() {

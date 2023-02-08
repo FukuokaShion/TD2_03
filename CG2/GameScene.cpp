@@ -57,8 +57,6 @@ void GameScene::Initialize(WinApp* winApp) {
 	Sprite::LoadTexture(18, L"Resources/tutorial4.png");
 	Sprite::LoadTexture(19, L"Resources/tutorial5.png");
 
-
-
 	//スプライトの設定
 	title_ = Sprite::Create(1, { 0 , 0 });
 	option_ = Sprite::Create(2, { 0,0 });

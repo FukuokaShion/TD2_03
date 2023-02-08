@@ -16,19 +16,18 @@ using namespace DirectX;
 class LoadJson
 {
 public:
-	void LoadFromJson(int stage,std::string fileName);
-	std::vector<WorldTransform>worldTrans;
-
+	void LoadFromJson(int stage,std::string fileName, std::vector<WorldTransform>&worldTrans);
 private:
+	//座標
 	std::vector<float> trans_x;
 	std::vector<float> trans_y;
 	std::vector<float> trans_z;
-
+	//サイズ
 	std::vector<float> scale_x;
 	std::vector<float> scale_y;
 	std::vector<float> scale_z;
 
-
+	//値をpushbackするときにそれぞれのxyzに入れる
 	enum vec3
 	{
 		x,

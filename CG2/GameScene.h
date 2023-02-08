@@ -14,6 +14,7 @@
 #include "Particle.h"
 
 #include"Map.h"
+#include"LoadJson.h"
 
 class GameScene {
 
@@ -81,6 +82,7 @@ private: // メンバ変数
 	//プレイヤー
 	Player* player_ = nullptr;
 	WorldTransform playerWorldTransform;
+	LoadJson playerJson;
 
 	//マップ
 	Map* map = nullptr;

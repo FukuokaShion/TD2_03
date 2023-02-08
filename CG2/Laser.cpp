@@ -86,6 +86,10 @@ void Laser::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection, 
 	}
 }
 
+void Laser::SetTransJson(Vector3 trans){
+	device_->worldTransform.translation = trans;
+}
+
 //‰Šú‰»
 void Laser::Reset() {
 	device_->worldTransform.rotation = { 0 , 0 , 0 };
