@@ -107,9 +107,16 @@ void LoadJson::LoadFromJson(int stage,std::string fileName, std::vector<WorldTra
 		for (size_t i = 0; i < trans_x.size(); i++)
 		{
 			WorldTransform matWorld_;
-			matWorld_.initialize();
+			matWorld_.initialize(); 
 			matWorld_.translation = { trans_x[i],trans_y[i],trans_z[i]};
-			matWorld_.scale = { scale_x[i],scale_y[i] ,scale_z[i] };
+			if (scale_x.size() <= i&& scale_y.size() <= i && scale_z.size() <= i)
+			{
+				matWorld_.scale = { 1,1,1};
+			}
+			else
+			{
+				matWorld_.scale = { scale_x[i],scale_y[i] ,scale_z[i] };
+			}
 			worldTrans.push_back(matWorld_);
 		}
 	}
