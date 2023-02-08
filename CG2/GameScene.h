@@ -74,7 +74,7 @@ private: // メンバ変数
 	Sprite* ESC_ = nullptr;
 	Sprite* pause_ = nullptr;
 	Sprite* back_ = nullptr;
-	
+	Sprite* cam_[2];
 	Sprite* tutorial_[5];
 
 //-------
@@ -87,6 +87,10 @@ private: // メンバ変数
 	//マップ
 	Map* map = nullptr;
 	int stage;
+
+	bool isLookdown;
+	float angle;
+	ViewProjection lookdown_;
 
 	//チュートリアル
 	int  tutorialNum;

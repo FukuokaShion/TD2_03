@@ -36,6 +36,7 @@ public:
 	//Õ“ËŒãˆ—
 	void OnCollision();
 
+	void SetCursol();
 
 	//ƒQƒbƒ^[
 	Vector3 GetAimPos();
