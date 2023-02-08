@@ -64,6 +64,8 @@ void GameScene::Initialize(WinApp* winApp) {
 	Sprite::LoadTexture(20, L"Resources/laserEffect.png");
 	Sprite::LoadTexture(21, L"Resources/cam1.png");
 	Sprite::LoadTexture(22, L"Resources/cam2.png");
+	Sprite::LoadTexture(23, L"Resources/3.png");
+
 
 
 	//スプライトの設定
@@ -78,10 +80,12 @@ void GameScene::Initialize(WinApp* winApp) {
 	stageButton_->SetAnchorPoint({ 0.5f,0.5f });
 	optionButton_ = Sprite::Create(7, { 1000,600 });
 	optionButton_->SetAnchorPoint({ 0.5f,0.5f });
-	number_[1] = Sprite::Create(9, { 568,360 });
+	number_[1] = Sprite::Create(9, { 540,360 });
 	number_[1]->SetAnchorPoint({ 0.5f, 0.5f });
-	number_[2] = Sprite::Create(10, { 711,360 });
+	number_[2] = Sprite::Create(10, { 640,360 });
 	number_[2]->SetAnchorPoint({ 0.5f, 0.5f });
+	number_[3] = Sprite::Create(23, { 740,360 });
+	number_[3]->SetAnchorPoint({ 0.5f, 0.5f });
 	ESC_ = Sprite::Create(11, { 70,40 });
 	ESC_->SetAnchorPoint({ 0.5f,0.5f });
 	pause_ = Sprite::Create(12, { 0, 0 });
@@ -138,22 +142,15 @@ void GameScene::Update() {
 
 	case Scene::Select:
 
-		if (input_.TriggerKey(DIK_A)) {
+		if (input_.TriggerKey(DIK_A) && button != 0) {
 			button -= 1;
 
-		}else if (input_.TriggerKey(DIK_D)) {
+		}else if (input_.TriggerKey(DIK_D)&& button != 2) {
 			button += 1;
 			//point_->SetPosition({ 711,450 });
 		}
-		if (button<0)
-		{
-			button = 0;
-		}
-		else if (button>2)
-		{
-			button = 1;
-		}
-		point_->SetPosition({ (568+(button*143.0f)),450});
+		
+		point_->SetPosition({ (540+(button*100.0f)),450});
 
 
 		if (input_.TriggerKey(DIK_SPACE)) {
@@ -384,6 +381,7 @@ void GameScene::Draw() {
 		stageSelect_->Draw();
 		number_[1]->Draw();
 		number_[2]->Draw();
+		number_[3]->Draw();
 		point_->Draw();
 
 		break;
