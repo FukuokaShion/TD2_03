@@ -99,4 +99,9 @@ private: // メンバ変数
 	const int tutorialTime = 180;
 	bool tutorialSwitch;
 
+
+	float R = 0.0f;
+	float G = 0.0f;
+	float B = 0.0f;
+	bool isClear;
 };

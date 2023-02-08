@@ -160,138 +160,161 @@ void GameScene::Update() {
 		break;
 
 	case Scene::Play:
-		if (isPause == false) {
-			map->Update();
-			//------カメラ-----
-				//情報取得
-			if (map->GetIsControlLaser()) {
 
-				if (input_.TriggerKey(DIK_F)) {
-					if (isLookdown) {
-						isLookdown = false;	
-					}else if (isLookdown==false) {
-						isLookdown = true;
-						angle = 0.0f;
-						lookdown_.UpdateView();
+		if (isClear == false) {
+			if (isPause == false) {
+				map->Update();
+				//------カメラ-----
+					//情報取得
+				if (map->GetIsControlLaser()) {
+
+					if (input_.TriggerKey(DIK_F)) {
+						if (isLookdown) {
+							isLookdown = false;
+						}
+						else if (isLookdown == false) {
+							isLookdown = true;
+							angle = 0.0f;
+							lookdown_.UpdateView();
+						}
+					}
+
+					player_->Update();
+					if (isLookdown == false) {
+						viewProjection_ = map->GetView();
+						map->controlRaser();
+						map->CheckCollionPlayer2Device();
+
+					}
+					else {
+						if (input_.PushKey(DIK_Q) || input_.PushKey(DIK_E))
+						{
+							if (input_.PushKey(DIK_Q)) { angle += XMConvertToRadians(1.0f); }
+							else if (input_.PushKey(DIK_E)) { angle -= XMConvertToRadians(1.0f); }
+
+							//angleラジアンだけY軸まわりに回転。半径は-100
+							lookdown_.eye.x = -50 * sinf(angle);
+							lookdown_.eye.z = -50 * cosf(angle);
+							lookdown_.UpdateView();
+						}
+
+						viewProjection_ = lookdown_;
 					}
 				}
-
-				player_->Update();
-				if (isLookdown==false) {
-					viewProjection_ = map->GetView();
-					map->controlRaser();
+				else {
+					//プレイヤー
+					player_->Move();
 					map->CheckCollionPlayer2Device();
-			
-				}else {
-					if (input_.PushKey(DIK_Q) || input_.PushKey(DIK_E))
-					{
-						if (input_.PushKey(DIK_Q)) { angle += XMConvertToRadians(1.0f); }
-						else if (input_.PushKey(DIK_E)) { angle -= XMConvertToRadians(1.0f); }
-
-						//angleラジアンだけY軸まわりに回転。半径は-100
-						lookdown_.eye.x = -50 * sinf(angle);
-						lookdown_.eye.z = -50 * cosf(angle);
-						lookdown_.UpdateView();
-					}
-
-					viewProjection_ = lookdown_;
+					player_->Rotate();
+					viewProjection_ = player_->GetView();
+					player_->Update();
 				}
-			}else {
-				//プレイヤー
-				player_->Move();
-				map->CheckCollionPlayer2Device();
-				player_->Rotate();
-				viewProjection_ = player_->GetView();
-				player_->Update();
-			}
 
-			//全てのレーザーがクリスタルに当たっているなら
-			if (map->IsHitRLaser() && map->IsHitGLaser() && map->IsHitBLaser()) {
-				//クリア
-				scene = Scene::Clear;
-			}
+				//全てのレーザーがクリスタルに当たっているなら
+				if (map->IsHitRLaser() && map->IsHitGLaser() && map->IsHitBLaser()) {
+					//クリア
+					isClear = true;
+				}
 
-			if (input_.TriggerKey(DIK_ESCAPE)) {
-				isPause = true;
-			}
+				if (input_.TriggerKey(DIK_ESCAPE)) {
+					isPause = true;
+				}
 
-			//チュートリアル
-			if (stage == 0) {
-				//WASDで移動
-				if (tutorialNum == 0) {
-					if (input_.PushKey(DIK_W) || input_.PushKey(DIK_A) || input_.PushKey(DIK_S) || input_.PushKey(DIK_D)) {
-						tutorialSwitch = true;
+				//チュートリアル
+				if (stage == 0) {
+					//WASDで移動
+					if (tutorialNum == 0) {
+						if (input_.PushKey(DIK_W) || input_.PushKey(DIK_A) || input_.PushKey(DIK_S) || input_.PushKey(DIK_D)) {
+							tutorialSwitch = true;
+						}
+						if (tutorialSwitch) {
+							tutorialTimer--;
+							if (tutorialTimer < 0) {
+								tutorialNum = 1;
+								tutorialTimer = tutorialTime;
+								tutorialSwitch = false;
+							}
+						}
 					}
-					if (tutorialSwitch) {
+					//マウスで視点移動
+					else if (tutorialNum == 1) {
 						tutorialTimer--;
 						if (tutorialTimer < 0) {
-							tutorialNum = 1;
+							tutorialNum = 2;
 							tutorialTimer = tutorialTime;
-							tutorialSwitch = false;
+						}
+					}
+					//赤球を目指そう
+					else if (tutorialNum == 2) {
+						if (map->IsHitRDevice()) {
+							tutorialNum = 3;
+						}
+					}
+					//スペースで操作
+					else if (tutorialNum == 3) {
+						if (map->GetIsControlLaser()) {
+							tutorialNum = 4;
+						}
+
+					}
+					//全てのレーザーを当ててクリア
+					else if (tutorialNum == 4) {
+						tutorialTimer--;
+						if (tutorialTimer < 0) {
+							tutorialNum = 5;
+							tutorialTimer = tutorialTime;
 						}
 					}
 				}
-				//マウスで視点移動
-				else if(tutorialNum == 1) {
-					tutorialTimer--;
-					if (tutorialTimer < 0) {
-						tutorialNum = 2;
-						tutorialTimer = tutorialTime;
-					}
-				}
-				//赤球を目指そう
-				else if(tutorialNum == 2) {
-					if (map->IsHitRDevice()) {
-						tutorialNum = 3;
-					}
-				}
-				//スペースで操作
-				else if(tutorialNum == 3) {
-					if(map->GetIsControlLaser()) {
-						tutorialNum = 4;
-					}
 
+			}
+			else if (isPause) {
+
+				if (input_.TriggerKey(DIK_SPACE)) {
+					scene = Scene::Title;
+					Reset();
 				}
-				//全てのレーザーを当ててクリア
-				else if(tutorialNum == 4) {
-					tutorialTimer--;
-					if (tutorialTimer < 0) {
-						tutorialNum = 5;
-						tutorialTimer = tutorialTime;
-					}
+				if (input_.TriggerKey(DIK_ESCAPE)) {
+					isPause = false;
 				}
 			}
-
-		}else if (isPause) {
-
-			if (input_.TriggerKey(DIK_SPACE)) {
-				scene = Scene::Title;	
-				Reset();
-			}
-			if (input_.TriggerKey(DIK_ESCAPE)) {
-				isPause = false;
+		}
+		else {
+			if (R >= 1 && G >= 1 && B >= 1) {
+				scene = Scene::Clear;
 			}
 		}
 
 		//ちょっとしたエフェクト
-		{
-			float R = 0.0f;
-			float G = 0.0f;
-			float B = 0.0f;
-			if (map->IsHitRLaser())
-			{
-				R = 1.0f;
+		if (map->IsHitRLaser()){
+			if (R < 1) {
+				R += 0.02f;
 			}
-			if (map->IsHitGLaser())
-			{
-				G = 1.0f;
+		}else {
+			if (R > 0) {
+				R -= 0.05f;
 			}
-			if (map->IsHitBLaser())
-			{
-				B = 1.0f;
-			}
-			laserEffect_->SetColor(XMFLOAT4(R, G, B, 1));
 		}
+		if (map->IsHitGLaser()){
+			if (G < 1) {
+				G += 0.02f;
+			}
+		}else {
+			if (G > 0) {
+				G -= 0.05f;
+			}
+		}
+		if (map->IsHitBLaser()){
+			if (B < 1) {
+				B += 0.02f;
+			}
+		}else {
+			if (B > 0) {
+				B -= 0.05f;
+			}
+		}
+		laserEffect_->SetColor(XMFLOAT4(R, G, B, 1));
+
 
 		break;
 	case Scene::Clear:
@@ -444,6 +467,10 @@ void GameScene::Reset() {
 		tutorialTimer = tutorialTime;
 		tutorialSwitch = false;
 		isLookdown = false;
+		R = 0;
+		G = 0;
+		B = 0;
+		isClear = false;
 
 		break;
 	case Scene::Clear:
