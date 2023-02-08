@@ -78,9 +78,14 @@ void Map::Reset(int stage) {
 	blocks_.clear();
 	mirrors_.clear();
 
+	isControlRLaser = false;
+	isControlGLaser = false;
+	isControlBLaser = false;
+	
 	rLaser->Reset();
 	gLaser->Reset();
 	bLaser->Reset();
+
 	isHitRLaser = false;
 	isHitGLaser = false;
 	isHitBLaser = false;
