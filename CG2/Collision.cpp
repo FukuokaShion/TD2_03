@@ -21,9 +21,9 @@ bool Collision::CheckRay2Plane(const Ray& ray, Ray& nextRay, const Plane& plane,
 
 	//‚à‚Æ‚æ‚è‹——£‚ª‹ß‚¯‚ê‚Î‘‚«ž‚Þ
 	if (*distance > t) {
-		if (inter_.x >= plane.pos.x - plane.size.x && inter_.x <= plane.pos.x + plane.size.x) {
-			if (inter_.y >= plane.pos.y - plane.size.y && inter_.y <= plane.pos.y + plane.size.y) {
-				if (inter_.z >= plane.pos.z - plane.size.z && inter_.z <= plane.pos.z + plane.size.z) {
+		if (inter_.x >= plane.pos.x - (plane.size.x + 0.1f) && inter_.x <= plane.pos.x + (plane.size.x + 0.1f)) {
+			if (inter_.y >= plane.pos.y - (plane.size.y + 0.1f) && inter_.y <= plane.pos.y + (plane.size.y + 0.1f)) {
+				if (inter_.z >= plane.pos.z - (plane.size.z + 0.1f) && inter_.z <= plane.pos.z + (plane.size.z + 0.1f)) {
 
 					*distance = t;
 
@@ -67,9 +67,9 @@ bool Collision::CheckRay2Mirror(const Ray& ray, Ray& nextRay, const Plane& plane
 
 	//‚à‚Æ‚æ‚è‹——£‚ª‹ß‚¯‚ê‚Î‘‚«ž‚Þ
 	if (*distance > t) {
-		if (inter_.x >= plane.pos.x - plane.size.x && inter_.x <= plane.pos.x + plane.size.x) {
-			if (inter_.y >= plane.pos.y - plane.size.y && inter_.y <= plane.pos.y + plane.size.y) {
-				if (inter_.z >= plane.pos.z - plane.size.z && inter_.z <= plane.pos.z + plane.size.z) {
+		if (inter_.x >= plane.pos.x - (plane.size.x + 0.1f) && inter_.x <= plane.pos.x + (plane.size.x + 0.1f)) {
+			if (inter_.y >= plane.pos.y - (plane.size.y + 0.1f) && inter_.y <= plane.pos.y + (plane.size.y + 0.1f)) {
+				if (inter_.z >= plane.pos.z - (plane.size.z + 0.1f) && inter_.z <= plane.pos.z + (plane.size.z + 0.1f)) {
 
 					*distance = t;
 

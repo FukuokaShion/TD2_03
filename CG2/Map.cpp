@@ -151,18 +151,34 @@ void Map::Update() {
 
 	//デバッグ用壁
 	wallObject->Update();
+
+	//更新
+	rLaser->Update();
+	gLaser->Update();
+	bLaser->Update();
+
+	//レイとブロックの当たり判定
+	for (std::unique_ptr<Block>& block : blocks_) {
+		block->Update();
+	}
+	for (std::unique_ptr<Mirror>& mirror : mirrors_) {
+		mirror->Update();
+	}
+  
+	crystal->Update();
+}
+
+void Map::CheckCollionPlayer2Device() {
 	//プレイヤーの情報取得
 	//プレイヤー座標
 	WorldTransform playerWoorldTransform = player_->GetWorldTransform();
 	//プレイヤーサイズ
 	float playerR = player_->GetR();
-
-//------------------------------レーザー処理-------------------------
 	//レーザー装置座標取得
 	Vector3 rPos = rLaser->GetPos();
 	//レーザー装置とプレイヤーが接触しているか
-	if (playerWoorldTransform.translation.x + playerR >= rPos.x-1 && playerWoorldTransform.translation.x-playerR<= rPos.x + 1&&
-		playerWoorldTransform.translation.z + playerR >= rPos.z -1 && playerWoorldTransform.translation.z - playerR <= rPos.z + 1){
+	if (playerWoorldTransform.translation.x + playerR >= rPos.x - 1 && playerWoorldTransform.translation.x - playerR <= rPos.x + 1 &&
+		playerWoorldTransform.translation.z + playerR >= rPos.z - 1 && playerWoorldTransform.translation.z - playerR <= rPos.z + 1) {
 		isHitRDevice = true;
 
 		//スプライト表示
@@ -178,16 +194,63 @@ void Map::Update() {
 			else if (isControlRLaser == false) {
 				//操作する
 				isControlRLaser = true;
+				rLaser->SetCursol();
 			}
 		}
-	}else {
+	}
+	else {
 		//接触していないなら操作はできない
 		isControlRLaser = false;
 		isHitRDevice = false;
 	}
 
-//-----レーザーの更新--------
-	//操作しているなら
+
+
+	Vector3 gPos = gLaser->GetPos();
+	if (playerWoorldTransform.translation.x + playerR >= gPos.x - 1 && playerWoorldTransform.translation.x - playerR <= gPos.x + 1 &&
+		playerWoorldTransform.translation.z + playerR >= gPos.z - 1 && playerWoorldTransform.translation.z - playerR <= gPos.z + 1) {
+		//スプライト表示
+		isPlayer = true;
+		if (input.TriggerKey(DIK_SPACE)) {
+			if (isControlGLaser) {
+				isControlGLaser = false;
+			}
+			else if (isControlGLaser == false) {
+				isControlGLaser = true;
+				gLaser->SetCursol();
+			}
+		}
+	}
+	else {
+		isControlGLaser = false;
+	}
+
+
+	Vector3 bPos = bLaser->GetPos();
+	if (playerWoorldTransform.translation.x + playerR >= bPos.x - 1 && playerWoorldTransform.translation.x - playerR <= bPos.x + 1 &&
+		playerWoorldTransform.translation.z + playerR >= bPos.z - 1 && playerWoorldTransform.translation.z - playerR <= bPos.z + 1) {
+		//スプライト表示
+		isPlayer = true;
+		if (input.TriggerKey(DIK_SPACE)) {
+			if (isControlBLaser) {
+				isControlBLaser = false;
+			}
+			else if (isControlBLaser == false) {
+				isControlBLaser = true;
+				bLaser->SetCursol();
+			}
+		}
+	}
+	else {
+		isControlBLaser = false;
+	}
+
+}
+
+void Map::controlRaser() {
+
+	//-----レーザーの更新--------
+		//操作しているなら
 	if (isControlRLaser) {
 		//レーザー装置の回転
 		rLaser->Rotate();
@@ -213,7 +276,7 @@ void Map::Update() {
 			for (std::unique_ptr<Block>& block : blocks_) {
 				block->CheckCollision(ray, i, &dis);
 			}
-      
+
 			//レイと鏡の当たり判定
 			for (std::unique_ptr<Mirror>& mirror : mirrors_) {
 				mirror->CheckCollision(ray, i, &dis);
@@ -233,24 +296,6 @@ void Map::Update() {
 		rLaser->Affine();
 	}
 
-
-	Vector3 gPos = gLaser->GetPos();
-	if (playerWoorldTransform.translation.x + playerR >= gPos.x - 1 && playerWoorldTransform.translation.x - playerR <= gPos.x + 1 &&
-		playerWoorldTransform.translation.z + playerR >= gPos.z - 1 && playerWoorldTransform.translation.z - playerR <= gPos.z + 1) {
-		//スプライト表示
-		isPlayer = true;
-		if (input.TriggerKey(DIK_SPACE)) {
-			if (isControlGLaser) {
-				isControlGLaser = false;
-			}
-			else if (isControlGLaser == false) {
-				isControlGLaser = true;
-			}
-		}
-	}
-	else {
-		isControlGLaser = false;
-	}
 
 	if (isControlGLaser) {
 		gLaser->Rotate();
@@ -287,24 +332,6 @@ void Map::Update() {
 		gLaser->Affine();
 	}
 
-	Vector3 bPos = bLaser->GetPos();
-	if (playerWoorldTransform.translation.x + playerR >= bPos.x - 1 && playerWoorldTransform.translation.x - playerR <= bPos.x + 1 &&
-		playerWoorldTransform.translation.z + playerR >= bPos.z - 1 && playerWoorldTransform.translation.z - playerR <= bPos.z + 1) {
-		//スプライト表示
-		isPlayer = true;
-		if (input.TriggerKey(DIK_SPACE)) {
-			if (isControlBLaser) {
-				isControlBLaser = false;
-			}
-			else if (isControlBLaser == false) {
-				isControlBLaser = true;
-			}
-		}
-	}
-	else {
-		isControlBLaser = false;
-	}
-
 	if (isControlBLaser) {
 		bLaser->Rotate();
 		float dis;
@@ -339,22 +366,6 @@ void Map::Update() {
 
 		bLaser->Affine();
 	}
-
-
-	//更新
-	rLaser->Update();
-	gLaser->Update();
-	bLaser->Update();
-
-	//レイとブロックの当たり判定
-	for (std::unique_ptr<Block>& block : blocks_) {
-		block->Update();
-	}
-	for (std::unique_ptr<Mirror>& mirror : mirrors_) {
-		mirror->Update();
-	}
-  
-	crystal->Update();
 }
 
 void Map::Draw() {

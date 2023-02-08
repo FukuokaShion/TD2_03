@@ -23,6 +23,9 @@ public:
 
 	void Update();
 
+	void CheckCollionPlayer2Device();
+	void controlRaser();
+
 	void Draw();
 
 	void Draw2D();

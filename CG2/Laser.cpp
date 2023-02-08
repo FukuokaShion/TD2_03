@@ -100,6 +100,7 @@ void Laser::Reset() {
 	}
 	reflection = 0;
 	theta = 0;
+	cursorTimer = 0;
 }
 
 void Laser::Update() {
@@ -137,6 +138,17 @@ void Laser::Draw() {
 		laser_[i]->Draw();
 	}
 	
+}
+
+void Laser::SetCursol() {
+	//カーソルの位置移動
+	SetCursorPos(width / 2, height / 2);
+	//保存してるマウス位置も中心に変更
+	mousePos = { width / 2, height / 2 };
+	oldMousePos = { width / 2, height / 2 };
+
+	//タイマーのリセット
+	cursorTimer = 0;
 }
 
 void Laser::Rotate() {

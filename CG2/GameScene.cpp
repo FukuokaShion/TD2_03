@@ -19,9 +19,14 @@ void GameScene::Initialize(WinApp* winApp) {
 		(float)winApp->window_width / winApp->window_height,
 		0.1f, 1000.0f
 	);
-
+	
 	viewProjection_.Initialize();
 	viewProjection_.eye = Vector3{ 0,3,-8 };
+
+	lookdown_.Initialize();
+	lookdown_.eye = Vector3{ 0,30,-50 };
+	lookdown_.target = Vector3{ 0,0,0 };
+	lookdown_.UpdateView();
 
 	//XAudioエンジンのインスタンスを生成
 	soundManager_.Initialize();
@@ -57,6 +62,9 @@ void GameScene::Initialize(WinApp* winApp) {
 	Sprite::LoadTexture(18, L"Resources/tutorial4.png");
 	Sprite::LoadTexture(19, L"Resources/tutorial5.png");
 	Sprite::LoadTexture(20, L"Resources/laserEffect.png");
+	Sprite::LoadTexture(21, L"Resources/cam1.png");
+	Sprite::LoadTexture(22, L"Resources/cam2.png");
+
 
 	//スプライトの設定
 	title_ = Sprite::Create(1, { 0 , 0 });
@@ -86,7 +94,9 @@ void GameScene::Initialize(WinApp* winApp) {
 	tutorial_[2] = Sprite::Create(17, { 0,0 });
 	tutorial_[3] = Sprite::Create(18, { 0,0 });
 	tutorial_[4] = Sprite::Create(19, { 0,0 });
-	laserEffect_ = Sprite::Create(20, { 0,0 });
+  laserEffect_ = Sprite::Create(20, { 0,0 });
+	cam_[0] = Sprite::Create(21, { 0,0 });
+	cam_[1] = Sprite::Create(22, { 0,0 });
 	
 }
 
@@ -150,20 +160,46 @@ void GameScene::Update() {
 		break;
 
 	case Scene::Play:
-
-		map->Update();
-
 		if (isPause == false) {
+			map->Update();
 			//------カメラ-----
 				//情報取得
 			if (map->GetIsControlLaser()) {
+
+				if (input_.TriggerKey(DIK_F)) {
+					if (isLookdown) {
+						isLookdown = false;	
+					}else if (isLookdown==false) {
+						isLookdown = true;
+						angle = 0.0f;
+						lookdown_.UpdateView();
+					}
+				}
+
 				player_->Update();
-				viewProjection_ = map->GetView();
-			}
-			else {
+				if (isLookdown==false) {
+					viewProjection_ = map->GetView();
+					map->controlRaser();
+					map->CheckCollionPlayer2Device();
+			
+				}else {
+					if (input_.PushKey(DIK_Q) || input_.PushKey(DIK_E))
+					{
+						if (input_.PushKey(DIK_Q)) { angle += XMConvertToRadians(1.0f); }
+						else if (input_.PushKey(DIK_E)) { angle -= XMConvertToRadians(1.0f); }
+
+						//angleラジアンだけY軸まわりに回転。半径は-100
+						lookdown_.eye.x = -50 * sinf(angle);
+						lookdown_.eye.z = -50 * cosf(angle);
+						lookdown_.UpdateView();
+					}
+
+					viewProjection_ = lookdown_;
+				}
+			}else {
 				//プレイヤー
 				player_->Move();
-
+				map->CheckCollionPlayer2Device();
 				player_->Rotate();
 				viewProjection_ = player_->GetView();
 				player_->Update();
@@ -342,6 +378,15 @@ void GameScene::Draw() {
 			}
 		}
 		
+		if (map->GetIsControlLaser()) {
+			if (isLookdown) {
+				cam_[1]->Draw();
+			}else {
+				cam_[0]->Draw();
+			}
+		}
+
+
 		if (isPause) {
 			pause_->Draw();
 			titleButtom_->Draw();
@@ -398,6 +443,7 @@ void GameScene::Reset() {
 		tutorialNum = 0;
 		tutorialTimer = tutorialTime;
 		tutorialSwitch = false;
+		isLookdown = false;
 
 		break;
 	case Scene::Clear:
