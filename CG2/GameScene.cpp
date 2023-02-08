@@ -56,6 +56,7 @@ void GameScene::Initialize(WinApp* winApp) {
 	Sprite::LoadTexture(17, L"Resources/tutorial3.png");
 	Sprite::LoadTexture(18, L"Resources/tutorial4.png");
 	Sprite::LoadTexture(19, L"Resources/tutorial5.png");
+	Sprite::LoadTexture(20, L"Resources/laserEffect.png");
 
 	//スプライトの設定
 	title_ = Sprite::Create(1, { 0 , 0 });
@@ -85,6 +86,7 @@ void GameScene::Initialize(WinApp* winApp) {
 	tutorial_[2] = Sprite::Create(17, { 0,0 });
 	tutorial_[3] = Sprite::Create(18, { 0,0 });
 	tutorial_[4] = Sprite::Create(19, { 0,0 });
+	laserEffect_ = Sprite::Create(20, { 0,0 });
 	
 }
 
@@ -235,6 +237,26 @@ void GameScene::Update() {
 			}
 		}
 
+		//ちょっとしたエフェクト
+		{
+			float R = 0.0f;
+			float G = 0.0f;
+			float B = 0.0f;
+			if (map->IsHitRLaser())
+			{
+				R = 1.0f;
+			}
+			if (map->IsHitGLaser())
+			{
+				G = 1.0f;
+			}
+			if (map->IsHitBLaser())
+			{
+				B = 1.0f;
+			}
+			laserEffect_->SetColor(XMFLOAT4(R, G, B, 1));
+		}
+
 		break;
 	case Scene::Clear:
 		if (input_.TriggerKey(DIK_SPACE)) {
@@ -300,6 +322,9 @@ void GameScene::Draw() {
 		break;
 
 	case Scene::Play:
+		if (map->IsHitRLaser() || map->IsHitGLaser() || map->IsHitBLaser()) {
+			laserEffect_->Draw();
+		}
 		if (stage == 0) {
 			if (tutorialNum == 0) {
 				tutorial_[0]->Draw();
@@ -322,6 +347,8 @@ void GameScene::Draw() {
 			titleButtom_->Draw();
 			point_->Draw();
 		}
+
+		map->Draw2D();
 
 		ESC_->Draw();
 		
