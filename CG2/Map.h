@@ -39,6 +39,7 @@ public:
 	bool IsHitRLaser() { return isHitRLaser; };
 	bool IsHitGLaser() { return isHitGLaser; };
 	bool IsHitBLaser() { return isHitBLaser; };
+	bool IsHitRDevice() { return isHitRDevice; };
 
 private:
 	enum Colour
@@ -75,6 +76,7 @@ private:
 	bool isHitGLaser = false;
 	bool isHitBLaser = false;
 
+	bool isHitRDevice = false;
 //--------------------
 	//デバッグ用フィールド
 	GameObject3D* wallObject = nullptr;

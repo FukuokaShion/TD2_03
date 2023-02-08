@@ -51,6 +51,11 @@ void GameScene::Initialize(WinApp* winApp) {
 	Sprite::LoadTexture(12, L"Resources/pause.png");
 	Sprite::LoadTexture(13, L"Resources/titleButtom.png");
 	Sprite::LoadTexture(14, L"Resources/back.png");
+	Sprite::LoadTexture(15, L"Resources/tutorial1.png");
+	Sprite::LoadTexture(16, L"Resources/tutorial2.png");
+	Sprite::LoadTexture(17, L"Resources/tutorial3.png");
+	Sprite::LoadTexture(18, L"Resources/tutorial4.png");
+	Sprite::LoadTexture(19, L"Resources/tutorial5.png");
 
 	//スプライトの設定
 	title_ = Sprite::Create(1, { 0 , 0 });
@@ -75,6 +80,12 @@ void GameScene::Initialize(WinApp* winApp) {
 	titleButtom_->SetAnchorPoint({ 0.5f,0.5f });
 	back_ = Sprite::Create(14, { 711,360 });
 	back_->SetAnchorPoint({ 0.5f,0.5f });
+	tutorial_[0] = Sprite::Create(15, { 0,0 });
+	tutorial_[1] = Sprite::Create(16, { 0,0 });
+	tutorial_[2] = Sprite::Create(17, { 0,0 });
+	tutorial_[3] = Sprite::Create(18, { 0,0 });
+	tutorial_[4] = Sprite::Create(19, { 0,0 });
+	
 }
 
 void GameScene::Update() {
@@ -127,6 +138,7 @@ void GameScene::Update() {
 		if (input_.TriggerKey(DIK_SPACE)) {
 			ShowCursor(FALSE);
 			player_->Reset();
+			stage = button;
 			map->Reset(button);
 			scene = Scene::Play;
 			Reset();
@@ -164,6 +176,54 @@ void GameScene::Update() {
 			if (input_.TriggerKey(DIK_ESCAPE)) {
 				isPause = true;
 			}
+
+			//チュートリアル
+			if (stage == 0) {
+				//WASDで移動
+				if (tutorialNum == 0) {
+					if (input_.PushKey(DIK_W) || input_.PushKey(DIK_A) || input_.PushKey(DIK_S) || input_.PushKey(DIK_D)) {
+						tutorialSwitch = true;
+					}
+					if (tutorialSwitch) {
+						tutorialTimer--;
+						if (tutorialTimer < 0) {
+							tutorialNum = 1;
+							tutorialTimer = tutorialTime;
+							tutorialSwitch = false;
+						}
+					}
+				}
+				//マウスで視点移動
+				else if(tutorialNum == 1) {
+					tutorialTimer--;
+					if (tutorialTimer < 0) {
+						tutorialNum = 2;
+						tutorialTimer = tutorialTime;
+					}
+				}
+				//赤球を目指そう
+				else if(tutorialNum == 2) {
+					if (map->IsHitRDevice()) {
+						tutorialNum = 3;
+					}
+				}
+				//スペースで操作
+				else if(tutorialNum == 3) {
+					if(map->GetIsControlLaser()) {
+						tutorialNum = 4;
+					}
+
+				}
+				//全てのレーザーを当ててクリア
+				else if(tutorialNum == 4) {
+					tutorialTimer--;
+					if (tutorialTimer < 0) {
+						tutorialNum = 5;
+						tutorialTimer = tutorialTime;
+					}
+				}
+			}
+
 		}else if (isPause) {
 
 			if (input_.TriggerKey(DIK_SPACE)) {
@@ -240,11 +300,29 @@ void GameScene::Draw() {
 		break;
 
 	case Scene::Play:
+		if (stage == 0) {
+			if (tutorialNum == 0) {
+				tutorial_[0]->Draw();
+			}else if (tutorialNum == 1) {
+				tutorial_[1]->Draw();
+			}
+			else if (tutorialNum == 2) {
+				tutorial_[2]->Draw();
+			}
+			else if (tutorialNum == 3) {
+				tutorial_[3]->Draw();
+			}
+			else if (tutorialNum == 4) {
+				tutorial_[4]->Draw();
+			}
+		}
+		
 		if (isPause) {
 			pause_->Draw();
 			titleButtom_->Draw();
 			point_->Draw();
 		}
+
 		ESC_->Draw();
 		
 		break;
@@ -286,10 +364,13 @@ void GameScene::Reset() {
 		break;
 
 	case Scene::Play:
+		ShowCursor(false);
 		isPause = false;
 		point_->SetPosition({ 568,480 });
 		titleButtom_->SetPosition({ 711,480 });
-
+		tutorialNum = 0;
+		tutorialTimer = tutorialTime;
+		tutorialSwitch = false;
 
 		break;
 	case Scene::Clear:
