@@ -149,7 +149,6 @@ void GameScene::Update() {
 
 		if (input_.TriggerKey(DIK_SPACE)) {
 			ShowCursor(FALSE);
-			player_->Reset();
 			stage = button;
 			map->Reset(button);
 			scene = Scene::Play;
@@ -471,6 +470,11 @@ void GameScene::Reset() {
 		G = 0;
 		B = 0;
 		isClear = false;
+
+		player_->Reset();
+		map->Update();
+		player_->Update();
+		viewProjection_ = player_->GetView();
 
 		break;
 	case Scene::Clear:
