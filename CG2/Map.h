@@ -4,7 +4,7 @@
 #include<memory>
 #include"Laser.h"
 #include"Player.h"
-
+#include "DX12base.h"
 #include"Block.h"
 #include"Crystal.h"
 #include"Sprite.h"
@@ -53,6 +53,8 @@ private:
 
 	//プレイヤー
 	Player* player_ = nullptr;
+
+	DX12base& dx12base_ = DX12base::GetInstance();
 
 //-----レーザー-------
 	//プレイヤーとレーザー装置が当たってる時のスプライト 

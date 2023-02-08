@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject3D.h"
 #include"CollisionPrimitive.h"
+#include "DX12base.h"
 
 class Mirror {
 public:
@@ -20,6 +21,8 @@ public:
 
 	//オブジェクト
 	GameObject3D* obj;
+
+	DX12base& dx12base_ = DX12base::GetInstance();
 
 	//当たり判定
 	Plane frontPlane;

@@ -26,7 +26,7 @@ public:
 	void Update();
 	void forwardMatrix();
 
-	void Draw();
+	void Draw(ComPtr<ID3D12GraphicsCommandList> cmdList);
 
 	//アクセッサ
 	void SetViewProjection(ViewProjection* viewProjection);
@@ -81,6 +81,11 @@ private:
 	ComPtr<ID3D12Resource> constBuffMaterial = nullptr;
 
 	XMMATRIX* matProjection;
+
+	// ルートシグネチャ
+	static ComPtr<ID3D12RootSignature> rootsignature;
+	// パイプラインステートオブジェクト
+	static ComPtr<ID3D12PipelineState> pipelinestate;
 
 	//DirectX基礎部分
 	DX12base& dx12base = DX12base::GetInstance();

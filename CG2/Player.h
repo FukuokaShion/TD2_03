@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "MathFunc.h"
 #include "ViewProjection.h"
+#include "DX12base.h"
 
 class Map;
 
@@ -50,6 +51,8 @@ public:
 private:
 	//ƒƒ“ƒo•Ï”
 private:
+
+	DX12base& dx12base_ = DX12base::GetInstance();
 	Map* map_;
 	//ƒL[“ü—Í
 	Input& input = Input::GetInstance();

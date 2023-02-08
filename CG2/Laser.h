@@ -4,6 +4,7 @@
 #include "MathFunc.h"
 #include "ViewProjection.h"
 #include"CollisionPrimitive.h"
+#include "DX12base.h"
 
 #include"Block.h"
 #include"Mirror.h"
@@ -47,6 +48,7 @@ public:
 
 	//ƒƒ“ƒoŠÖ”
 private:
+	DX12base& dx12base_ = DX12base::GetInstance();
 
 
 public:

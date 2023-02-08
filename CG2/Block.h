@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject3D.h"
 #include"CollisionPrimitive.h"
+#include "DX12base.h"
 
 class Block {
 public:
@@ -17,6 +18,7 @@ public:
 
 	void Draw();
 
+	DX12base& dx12base_ = DX12base::GetInstance();
 
 	GameObject3D* obj;
 

@@ -60,7 +60,7 @@ void Player::Update() {
 }
 
 void Player::Draw() {
-	player_->Draw();
+	player_->Draw(dx12base_.GetCmdList().Get());
 	
 }
 

@@ -1,5 +1,8 @@
 #include "GameObject3D.h"
 
+ComPtr<ID3D12RootSignature> GameObject3D::rootsignature;
+ComPtr<ID3D12PipelineState> GameObject3D::pipelinestate;
+
 class ViewProjection {
 public:
 	Matrix4 matView;
@@ -49,7 +52,8 @@ void GameObject3D::forwardMatrix() {
 }
 
 
-void GameObject3D::Draw() {
+void GameObject3D::Draw(ComPtr<ID3D12GraphicsCommandList> cmdList) {
+
 
 	//頂点バッファ―ビューをセットするコマンド
 	dx12base.GetCmdList()->SetGraphicsRootConstantBufferView(0 , constBuffMaterial->GetGPUVirtualAddress());

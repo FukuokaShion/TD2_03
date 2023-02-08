@@ -355,7 +355,7 @@ void Map::Draw() {
 	rLaser->Draw();
 	gLaser->Draw();
 	bLaser->Draw();
-	wallObject->Draw();
+	wallObject->Draw(dx12base_.GetCmdList().Get());
 	for (std::unique_ptr<Block>& block : blocks_) {
 		block->Draw();
 	}

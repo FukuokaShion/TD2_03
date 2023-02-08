@@ -131,5 +131,5 @@ bool Crystal::CheckCollision(Ray* ray, int i, float* dis) {
 }
 
 void Crystal::Draw() {
-	obj->Draw();
+	obj->Draw(dx12base_.GetCmdList().Get());
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject3D.h"
 #include"CollisionPrimitive.h"
+#include "DX12base.h"
 
 class Crystal {
 public:
@@ -19,7 +20,7 @@ public:
 
 
 	GameObject3D* obj;
-
+	DX12base& dx12base_ = DX12base::GetInstance();
 	Plane frontPlane;
 	Plane backPlane;
 	Plane leftPlane;

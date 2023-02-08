@@ -326,26 +326,29 @@ int WINAPI WinMain(_In_ HINSTANCE , _In_opt_ HINSTANCE , _In_ LPSTR , _In_ int) 
 
 #pragma region//描画処理
 
-	
-
-		postEffect->PreDrawScene(dx12base.GetCmdList(), dx12base.GetDevice());
-
-		gameScene->Draw();
-
-		postEffect->PostDrawScene(dx12base.GetCmdList());
-
-#pragma endregion
-		dx12base.PreDraw();
-
-		postEffect->Draw(dx12base.GetCmdList(), dx12base.GetDevice());
-
-		//描画前処理
-
-		//パイプラインステートとルートシグネチャの設定コマンド
 		dx12base.GetCmdList()->SetPipelineState(pipelineState.Get());
 		dx12base.GetCmdList()->SetGraphicsRootSignature(rootSignature.Get());
 		//プリミティブ形状の設定コマンド
 		dx12base.GetCmdList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		postEffect->PreDrawScene(dx12base.GetCmdList().Get(), dx12base.GetDevice().Get());
+
+		gameScene->Draw();
+
+		postEffect->PostDrawScene(dx12base.GetCmdList().Get());
+
+		dx12base.PreDraw();
+#pragma endregion
+
+		postEffect->Draw(dx12base.GetCmdList().Get(), dx12base.GetDevice().Get());
+
+		//描画前処理
+
+		////パイプラインステートとルートシグネチャの設定コマンド
+		//dx12base.GetCmdList()->SetPipelineState(pipelineState.Get());
+		//dx12base.GetCmdList()->SetGraphicsRootSignature(rootSignature.Get());
+		////プリミティブ形状の設定コマンド
+		//dx12base.GetCmdList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 
 

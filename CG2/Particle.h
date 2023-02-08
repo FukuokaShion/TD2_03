@@ -2,7 +2,7 @@
 #include "GameObject3D.h"
 #include "Player.h"
 #include "Audio.h"
-
+#include "DX12base.h"
 class Particle {
 public:
 
@@ -21,6 +21,8 @@ public:
 	int GetIsDead();
 
 private:
+
+	DX12base& dx12base_ = DX12base::GetInstance();
 
 	static const int particleValue = 20;
 

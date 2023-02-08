@@ -94,7 +94,7 @@ void Particle::Draw() {
 	for (int i = 0; i < particleValue; i++) {
 		if (isDead[i] == false && particleOff[i] == false) {
 
-			gameObject[i]->Draw();
+			gameObject[i]->Draw(dx12base_.GetCmdList().Get());
 
 		}
 	}

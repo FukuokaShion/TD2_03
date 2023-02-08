@@ -128,9 +128,9 @@ void Laser::Update() {
 }
 
 void Laser::Draw() {
-	device_->Draw();
+	device_->Draw(dx12base_.GetCmdList().Get());
 	for (int i = 0; i < reflection + 1; i++) {
-		laser_[i]->Draw();
+		laser_[i]->Draw(dx12base_.GetCmdList().Get());
 	}
 	
 }

@@ -116,5 +116,5 @@ void Block::CheckCollision(Ray* ray,int i,float* dis) {
 }
 
 void Block::Draw() {
-	obj->Draw();
+	obj->Draw(dx12base_.GetCmdList().Get());
 }

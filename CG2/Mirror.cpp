@@ -116,5 +116,5 @@ void Mirror::CheckCollision(Ray* ray, int i, float* dis) {
 }
 
 void Mirror::Draw() {
-	obj->Draw();
+	obj->Draw(dx12base_.GetCmdList().Get());
 }
