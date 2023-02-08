@@ -91,11 +91,7 @@ void Map::Reset(int stage) {
 		blockWorld.clear();
 		blocks_.remove_if([](std::unique_ptr<Block>& block) { return true; });
 		//jsonファイルから値を抽出
-		loadJson.LoadFromJson(stage, "Block.json");
-		for (size_t i = 0; i < loadJson.worldTrans.size(); i++)
-		{
-			blockWorld.push_back(loadJson.worldTrans[i]);
-		}
+		loadJson.LoadFromJson(stage, "Block.json",blockWorld);
 
 		for (size_t i = 0; i < blockWorld.size(); i++)
 		{
@@ -115,11 +111,7 @@ void Map::Reset(int stage) {
 		mirrorWorld.clear();
 		mirrors_.remove_if([](std::unique_ptr<Mirror>& mirror) { return true; });
 		//jsonファイルから値を抽出
-		loadJson.LoadFromJson(stage, "Mirror.json");
-		for (size_t i = 0; i < loadJson.worldTrans.size(); i++)
-		{
-			mirrorWorld.push_back(loadJson.worldTrans[i]);
-		}
+		loadJson.LoadFromJson(stage, "Mirror.json", mirrorWorld);
 
 		for (size_t i = 0; i < mirrorWorld.size(); i++)
 		{
@@ -135,19 +127,20 @@ void Map::Reset(int stage) {
 	//クリスタル
 	{
 		//jsonファイルから値を抽出
-		loadJson.LoadFromJson(stage, "Crystal.json");
-		WorldTransform crystalworld;
-		crystalworld.initialize();
-		crystalworld = loadJson.worldTrans[0];
-		crystal->Initialize(viewProjection_, matProjection_, crystalworld);
+		std::vector<WorldTransform> crystalWorld;
+		crystalWorld.clear();
+		loadJson.LoadFromJson(stage, "Crystal.json", crystalWorld);
+		crystal->Initialize(viewProjection_, matProjection_, crystalWorld[0]);
 	}
 	//レーザー装置
 	{
 		//jsonファイルから値を抽出
-		loadJson.LoadFromJson(stage, "Laser.json");
-		rLaser->SetTransJson(loadJson.worldTrans[0].translation);
-		gLaser->SetTransJson(loadJson.worldTrans[1].translation);
-		bLaser->SetTransJson(loadJson.worldTrans[2].translation);
+		std::vector<WorldTransform> laserWorld;
+		laserWorld.clear();
+		loadJson.LoadFromJson(stage, "Laser.json",laserWorld);
+		rLaser->SetTransJson(laserWorld[0].translation);
+		gLaser->SetTransJson(laserWorld[1].translation);
+		bLaser->SetTransJson(laserWorld[2].translation);
 	}
 }
 
