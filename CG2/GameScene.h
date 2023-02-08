@@ -75,6 +75,7 @@ private: // メンバ変数
 	Sprite* pause_ = nullptr;
 	Sprite* back_ = nullptr;
 	Sprite* cam_[2];
+	Sprite* laserEffect_ = nullptr;	
 	Sprite* tutorial_[5];
 
 //-------
