@@ -73,6 +73,8 @@ private: // メンバ変数
 	Sprite* ESC_ = nullptr;
 	Sprite* pause_ = nullptr;
 	Sprite* back_ = nullptr;
+	
+	Sprite* tutorial_[5];
 
 //-------
 
@@ -82,5 +84,12 @@ private: // メンバ変数
 
 	//マップ
 	Map* map = nullptr;
-	
+	int stage;
+
+	//チュートリアル
+	int  tutorialNum;
+	int  tutorialTimer;
+	const int tutorialTime = 180;
+	bool tutorialSwitch;
+
 };

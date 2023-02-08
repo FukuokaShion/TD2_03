@@ -88,6 +88,7 @@ void Map::Reset(int stage) {
 	isHitRLaser = false;
 	isHitGLaser = false;
 	isHitBLaser = false;
+	isHitRDevice = false;
 	//ブロック
 	{
 			std::vector<WorldTransform> blockWorld;
@@ -156,6 +157,8 @@ void Map::Update() {
 	//レーザー装置とプレイヤーが接触しているか
 	if (playerWoorldTransform.translation.x + playerR >= rPos.x-1 && playerWoorldTransform.translation.x-playerR<= rPos.x + 1&&
 		playerWoorldTransform.translation.z + playerR >= rPos.z -1 && playerWoorldTransform.translation.z - playerR <= rPos.z + 1){
+		isHitRDevice = true;
+
 		//スプライト表示
 		isPlayer = true;
 		//スペースを押したか(トリガー)
@@ -174,6 +177,7 @@ void Map::Update() {
 	}else {
 		//接触していないなら操作はできない
 		isControlRLaser = false;
+		isHitRDevice = false;
 	}
 
 //-----レーザーの更新--------
