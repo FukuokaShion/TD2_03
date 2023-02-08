@@ -4,6 +4,7 @@
 #include "GameScene.h"
 #include "FPS.h"
 #include"nlohmann/json.hpp"
+#include "PostEffect.h"
 
 WinApp winApp_;
 using namespace DirectX;
@@ -26,6 +27,10 @@ int WINAPI WinMain(_In_ HINSTANCE , _In_opt_ HINSTANCE , _In_ LPSTR , _In_ int) 
 
 	Input& input_ = Input::GetInstance();
 	GameScene* gameScene = nullptr;
+
+	PostEffect* postEffect = nullptr;
+
+	
 
 #pragma endregion//ウィンドウの生成
 
@@ -51,7 +56,9 @@ int WINAPI WinMain(_In_ HINSTANCE , _In_opt_ HINSTANCE , _In_ LPSTR , _In_ int) 
 	gameScene->Initialize(&winApp_);
 
 
-
+	//Sprite::LoadTexture(100,"Resorce/greenLaser.png");
+	postEffect = new PostEffect;
+	postEffect->Initialize(dx12base.GetDevice());
 
 #pragma region//描画初期化処理
 
@@ -315,21 +322,35 @@ int WINAPI WinMain(_In_ HINSTANCE , _In_opt_ HINSTANCE , _In_ LPSTR , _In_ int) 
 
 #pragma endregion//更新処理
 
-		//描画前処理
-		dx12base.PreDraw();
+		
 
 #pragma region//描画処理
+
+	
+
+		postEffect->PreDrawScene(dx12base.GetCmdList(), dx12base.GetDevice());
+
+		gameScene->Draw();
+
+		postEffect->PostDrawScene(dx12base.GetCmdList());
+
+#pragma endregion
+		dx12base.PreDraw();
+
+		postEffect->Draw(dx12base.GetCmdList(), dx12base.GetDevice());
+
+		//描画前処理
 
 		//パイプラインステートとルートシグネチャの設定コマンド
 		dx12base.GetCmdList()->SetPipelineState(pipelineState.Get());
 		dx12base.GetCmdList()->SetGraphicsRootSignature(rootSignature.Get());
-
 		//プリミティブ形状の設定コマンド
 		dx12base.GetCmdList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		gameScene->Draw();
 
-#pragma endregion
+
+
+
 
 		//描画後処理
 		dx12base.PostDraw();

@@ -11,6 +11,9 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
+ID3D12GraphicsCommandList* PostEffect::cmdList = nullptr;
+//ComPtr<ID3D12GraphicsCommandList> cmdList = nullptr;
+
 //静的メンバ変数の実体
 const float PostEffect::clearColor[4] = { 0.1f,0.6f,0.1f,1.0f };//RGBA
 
@@ -19,15 +22,16 @@ PostEffect::PostEffect()
 
 }
 
-void PostEffect::Initialize(ID3D12Device* device) {
+void PostEffect::Initialize(ComPtr<ID3D12Device> device) {
 
 	HRESULT result;
-
+	CD3DX12_HEAP_PROPERTIES unk = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC unk2 = CD3DX12_RESOURCE_DESC::Buffer(sizeof(VertexPosUv) * vertNum);
 	// 頂点バッファ生成
 	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		&unk,
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(sizeof(VertexPosUv) * vertNum),
+		&unk2,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&vertBuff));
@@ -54,11 +58,14 @@ void PostEffect::Initialize(ID3D12Device* device) {
 	vbView.SizeInBytes = sizeof(VertexPosUv) * 4;
 	vbView.StrideInBytes = sizeof(VertexPosUv);
 
+	CD3DX12_HEAP_PROPERTIES tnk = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC tnk2 = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff);
+
 	// 定数バッファの生成
 	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), 	// アップロード可能
+		&tnk, 	// アップロード可能
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff),
+		&tnk2,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuff));
@@ -76,15 +83,15 @@ void PostEffect::Initialize(ID3D12Device* device) {
 
 	for (int i = 0; i < 2; i++)
 	{
-
+		CD3DX12_HEAP_PROPERTIES mnk = CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK,D3D12_MEMORY_POOL_L0);
+		CD3DX12_CLEAR_VALUE mnk2 = CD3DX12_CLEAR_VALUE(DXGI_FORMAT_R8G8B8A8_UNORM, clearColor);
 		//テクスチャバッファの生成
 		result = device->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK,
-				D3D12_MEMORY_POOL_L0),
+			&mnk,
 			D3D12_HEAP_FLAG_NONE,
 			&texresDesc,
 			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-			&CD3DX12_CLEAR_VALUE(DXGI_FORMAT_R8G8B8A8_UNORM, clearColor),
+			&mnk2,
 			IID_PPV_ARGS(&texBuff[i]));
 		assert(SUCCEEDED(result));
 
@@ -173,13 +180,16 @@ void PostEffect::Initialize(ID3D12Device* device) {
 			1, 0,
 			D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL
 		);
+	CD3DX12_HEAP_PROPERTIES oioi = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+	CD3DX12_CLEAR_VALUE tntn = CD3DX12_CLEAR_VALUE(DXGI_FORMAT_D32_FLOAT, 1.0f, 0);
+
 	//深度バッファの生成
 	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		&oioi,
 		D3D12_HEAP_FLAG_NONE,
 		&depthResDesc,
 		D3D12_RESOURCE_STATE_DEPTH_WRITE,
-		&CD3DX12_CLEAR_VALUE(DXGI_FORMAT_D32_FLOAT, 1.0f, 0),
+		&tntn,
 		IID_PPV_ARGS(&depthBuff));
 
 	assert(SUCCEEDED(result));
@@ -205,7 +215,7 @@ void PostEffect::Initialize(ID3D12Device* device) {
 
 }
 
-void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList, ID3D12Device* device) {
+void PostEffect::Draw(ComPtr<ID3D12GraphicsCommandList> cmdList, ComPtr<ID3D12Device> device) {
 
 	// ワールド行列の更新
 	this->matWorld = XMMatrixIdentity();
@@ -238,6 +248,8 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList, ID3D12Device* device) 
 	//	);
 	//}
 
+	// コマンドリストをセット
+	PostEffect::cmdList = cmdList.Get();
 
 	//パイプラインステートの設定
 	cmdList->SetPipelineState(pipelineState.Get());
@@ -277,16 +289,17 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList, ID3D12Device* device) 
 
 }
 
-void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList, ID3D12Device* device) {
+void PostEffect::PreDrawScene(ComPtr<ID3D12GraphicsCommandList> cmdList, ComPtr<ID3D12Device> device) {
+
+
+	PostEffect::cmdList = cmdList.Get();
 
 	for (int i = 0; i < 2; i++)
 	{
+		CD3DX12_RESOURCE_BARRIER hosoi = CD3DX12_RESOURCE_BARRIER::Transition(texBuff[i].Get(),D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 		//リソースバリアを変更(シェーダーリソース→描画可能)
-		cmdList->ResourceBarrier(1,
-			&CD3DX12_RESOURCE_BARRIER::Transition(texBuff[i].Get(),
-				D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-				D3D12_RESOURCE_STATE_RENDER_TARGET));
+		cmdList->ResourceBarrier(1,&hosoi);
 	}
 
 	//レンダーターゲットビュー用のディスクリプタヒープのハンドルを取得
@@ -329,20 +342,24 @@ void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList, ID3D12Device* 
 	//深度バッファのクリア
 	cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
+
 }
 
-void PostEffect::PostDrawScene(ID3D12GraphicsCommandList* cmdList) {
+void PostEffect::PostDrawScene(ComPtr<ID3D12GraphicsCommandList> cmdList) {
 	for (int i = 0; i < 2; i++)
 	{
-
+		CD3DX12_RESOURCE_BARRIER baki = CD3DX12_RESOURCE_BARRIER::Transition(texBuff[i].Get(),
+			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
 		//リソースバリアを変更(描画可能→シェーダーリソース)
-		cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(texBuff[i].Get(),
-			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+		cmdList->ResourceBarrier(1, &baki);
 	}
+
+	// コマンドリストを解除
+	PostEffect::cmdList = nullptr;
 }
 
-void PostEffect::CreateGraphicsPipelineState(ID3D12Device* device)
+void PostEffect::CreateGraphicsPipelineState(ComPtr<ID3D12Device> device)
 {
 	HRESULT result = S_FALSE;
 	ComPtr<ID3DBlob> vsBlob; // 頂点シェーダオブジェクト

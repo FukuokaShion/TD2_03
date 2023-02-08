@@ -256,7 +256,8 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
-
+	
+	
 	//3D描画
 	switch (scene)
 	{
