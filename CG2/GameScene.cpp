@@ -139,12 +139,21 @@ void GameScene::Update() {
 	case Scene::Select:
 
 		if (input_.TriggerKey(DIK_A)) {
-			button = 0;
-			point_->SetPosition({ 568,450 });
+			button -= 1;
+
 		}else if (input_.TriggerKey(DIK_D)) {
-			button = 1;
-			point_->SetPosition({ 711,450 });
+			button += 1;
+			//point_->SetPosition({ 711,450 });
 		}
+		if (button<0)
+		{
+			button = 0;
+		}
+		else if (button>2)
+		{
+			button = 1;
+		}
+		point_->SetPosition({ (568+(button*143.0f)),450});
 
 
 		if (input_.TriggerKey(DIK_SPACE)) {
