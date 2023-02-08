@@ -17,8 +17,8 @@ void Player::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection)
 	viewTargetMat.SetIdentityMatrix();
 
 	player_ = new GameObject3D();
-	player_->PreLoadModel("Resources/tofu/player.obj");
-	player_->PreLoadTexture(L"Resources/tofu/player.png");
+	player_->PreLoadModel("Resources/tofu/Pp.obj");
+	player_->PreLoadTexture(L"Resources/tofu/Pp.png");
 	player_->SetViewProjection(viewProjection);
 	player_->SetMatProjection(matProjection);
 	player_->Initialize();
