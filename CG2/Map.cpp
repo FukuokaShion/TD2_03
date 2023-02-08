@@ -65,8 +65,8 @@ void Map::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection) {
 	bLaser = new Laser();
 	bLaser->Initialize(viewProjection, matProjection, Colour::BLUE, { -20,0,0 });
 
-	Sprite::LoadTexture(9, L"Resources/keySpace.png");
-	commandSpace = Sprite::Create(9, { 1000 , 600 });
+	Sprite::LoadTexture(50, L"Resources/keySpace.png");
+	commandSpace = Sprite::Create(50, { 1000 , 600 });
 
 	//クリスタル
 	crystal = new Crystal();
