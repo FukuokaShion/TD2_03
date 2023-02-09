@@ -88,7 +88,7 @@ private: // メンバ変数
 	//マップ
 	Map* map = nullptr;
 	int stage;
-
+	int max;//ステージの最大数
 	bool isLookdown;
 	float angle;
 	ViewProjection lookdown_;

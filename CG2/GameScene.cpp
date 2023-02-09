@@ -65,6 +65,7 @@ void GameScene::Initialize(WinApp* winApp) {
 	Sprite::LoadTexture(21, L"Resources/cam1.png");
 	Sprite::LoadTexture(22, L"Resources/cam2.png");
 	Sprite::LoadTexture(23, L"Resources/3.png");
+	Sprite::LoadTexture(24, L"Resources/4.png");
 
 
 
@@ -80,12 +81,14 @@ void GameScene::Initialize(WinApp* winApp) {
 	stageButton_->SetAnchorPoint({ 0.5f,0.5f });
 	optionButton_ = Sprite::Create(7, { 1000,600 });
 	optionButton_->SetAnchorPoint({ 0.5f,0.5f });
-	number_[1] = Sprite::Create(9, { 540,360 });
+	number_[1] = Sprite::Create(9, { 490,360 });
 	number_[1]->SetAnchorPoint({ 0.5f, 0.5f });
-	number_[2] = Sprite::Create(10, { 640,360 });
+	number_[2] = Sprite::Create(10, { 590,360 });
 	number_[2]->SetAnchorPoint({ 0.5f, 0.5f });
-	number_[3] = Sprite::Create(23, { 740,360 });
+	number_[3] = Sprite::Create(23, { 690,360 });
 	number_[3]->SetAnchorPoint({ 0.5f, 0.5f });
+	number_[4] = Sprite::Create(24, { 790,360 });
+	number_[4]->SetAnchorPoint({ 0.5f, 0.5f });
 	ESC_ = Sprite::Create(11, { 70,40 });
 	ESC_->SetAnchorPoint({ 0.5f,0.5f });
 	pause_ = Sprite::Create(12, { 0, 0 });
@@ -101,7 +104,8 @@ void GameScene::Initialize(WinApp* winApp) {
   laserEffect_ = Sprite::Create(20, { 0,0 });
 	cam_[0] = Sprite::Create(21, { 0,0 });
 	cam_[1] = Sprite::Create(22, { 0,0 });
-	
+	//ステージの最大数
+	max = 3;
 }
 
 void GameScene::Update() {
@@ -145,12 +149,12 @@ void GameScene::Update() {
 		if (input_.TriggerKey(DIK_A) && button != 0) {
 			button -= 1;
 
-		}else if (input_.TriggerKey(DIK_D)&& button != 2) {
+		}else if (input_.TriggerKey(DIK_D)&& button != max) {
 			button += 1;
 			//point_->SetPosition({ 711,450 });
 		}
 		
-		point_->SetPosition({ (540+(button*100.0f)),450});
+		point_->SetPosition({ (490+(button*100.0f)),450});
 
 
 		if (input_.TriggerKey(DIK_SPACE)) {
@@ -382,6 +386,7 @@ void GameScene::Draw() {
 		number_[1]->Draw();
 		number_[2]->Draw();
 		number_[3]->Draw();
+		number_[4]->Draw();
 		point_->Draw();
 
 		break;
