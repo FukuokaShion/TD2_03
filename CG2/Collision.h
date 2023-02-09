@@ -15,5 +15,6 @@ public:
 
 	static bool CheckRay2Mirror(const Ray& ray,Ray& nextRay, const Plane& plane, float* distance);
 
+	static bool CheckSphere2Plane(const Sphere& sphere, const Plane& plane, Vector3* inter);
 
 };

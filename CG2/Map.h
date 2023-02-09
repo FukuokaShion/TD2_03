@@ -32,7 +32,7 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; };
 
-	void CheckCollisionPlayer2map(WorldTransform* playerPos,Vector3 velocity);
+	void CheckCollisionPlayer2map(WorldTransform* playerPos,Sphere* playerSphere, Vector3 velocity);
 
 	//レーザーを操作しているか
 	bool GetIsControlLaser();

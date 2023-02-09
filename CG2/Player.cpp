@@ -23,7 +23,8 @@ void Player::Initialize(ViewProjection* viewProjection, XMMATRIX* matProjection)
 	player_->SetMatProjection(matProjection);
 	player_->Initialize();
 
-
+	collision_.center = player_->worldTransform.translation;
+	collision_.radius = 1;
 
 	Reset();
 }
@@ -124,7 +125,7 @@ void Player::Move() {
 	//速度ベクトルを自機の向きに合わせて回転させる
 	velocity = bVelocity(velocity, player_->worldTransform);
 
-	map_->CheckCollisionPlayer2map(&player_->worldTransform, velocity);
+	map_->CheckCollisionPlayer2map(&player_->worldTransform, &collision_, velocity);
 }
 
 void Player::Attack() {

@@ -424,7 +424,7 @@ ViewProjection Map::GetView() {
 }
 
 
-void Map::CheckCollisionPlayer2map(WorldTransform* playerPos, Vector3 velocity) {
+void Map::CheckCollisionPlayer2map(WorldTransform* playerPos, Sphere* playerSphere, Vector3 velocity) {
 	WorldTransform* playerPos_;
 	playerPos_ = playerPos;
 	playerPos_->translation += velocity;
@@ -460,16 +460,36 @@ void Map::CheckCollisionPlayer2map(WorldTransform* playerPos, Vector3 velocity) 
 		}
 	}
 
-	if (playerPos_->translation.x < -40 + 1) {
-		playerPos_->translation.x = -40 + 1;
-	}else if (playerPos_->translation.x > 40 - 1) {
-		playerPos_->translation.x = 40 - 1;
-	}
+	Sphere sphere;
+	sphere.radius = playerSphere->radius;
+	sphere.center = playerSphere->center+ velocity;
+	Vector3 inter;
 
-	if (playerPos_->translation.z < -40 + 1) {
-		playerPos_->translation.z = -40 + 1;
-	}else if (playerPos_->translation.z > 40 - 1) {
-		playerPos_->translation.z = 40 - 1;
+	if (Collision::CheckSphere2Plane(sphere, frontPlane, &inter)) {
+		if (playerPos_->translation.z > 40 - 1) {
+			playerPos_->translation.z = 40 - 1;
+			sphere.center.z = 40 - 1;
+		}
+	}
+	if (Collision::CheckSphere2Plane(sphere, backPlane, &inter)) {
+		if (playerPos_->translation.z < -40 + 1) {
+			playerPos_->translation.z = -40 + 1;
+			sphere.center.z = -40 + 1;
+		}
+	}
+	if (Collision::CheckSphere2Plane(sphere, rightPlane, &inter)) {
+		if (playerPos_->translation.x > 40) {
+			playerPos_->translation.x = 40 - 1;
+			sphere.center.x = 40 - 1;
+		}
+
+	}
+	if (Collision::CheckSphere2Plane(sphere, leftPlane, &inter)) {
+		if (playerPos_->translation.x < -40) {
+			playerPos_->translation.x = -40 + 1;
+			sphere.center.x = -40 + 1;
+		}
+
 	}
 
 	playerPos = playerPos_;

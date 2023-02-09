@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "MathFunc.h"
 #include "ViewProjection.h"
+#include"CollisionPrimitive.h"
 
 class Map;
 
@@ -70,6 +71,8 @@ private:
 	Vector3 pos = { 0, 0, 0 };
 	int isDead = false;
 	float r = 1;
+
+	Sphere collision_;
 	//ˆÚ“®‘¬“x
 	const float moveSpeed = 0.5f;
 

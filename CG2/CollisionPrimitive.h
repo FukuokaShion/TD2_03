@@ -20,6 +20,17 @@ struct Plane
 };
 
 
+struct Sphere
+{
+	//’†SÀ•W
+	//DirectX::XMVECTOR center = { 0,0,0,1 };
+	Vector3 center = { 0,0,0 };
+
+	//”¼Œa
+	float radius = 1.0f;
+};
+
+
 //ƒŒƒC
 struct Ray
 {
